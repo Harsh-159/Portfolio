@@ -113,7 +113,7 @@ export const NODES: NodeData[] = [
         subtitle: 'Student',
         // REPLACE THE URL BELOW WITH YOUR ACTUAL IMAGE URL
         //image: 'https://ui-avatars.com/api/?name=Harsh+Yadav&background=bef264&color=0f172a&size=512&font-size=0.3', 
-        image:'/my_screenshot.png',
+        image:'https://drive.google.com/uc?export=view&id=1-ijQOYCSimudBYUGo4clC74VsRiGBypD',
         details: [
           'This is me, someone who believe the most exciting space in technology right now isn’t just where AI exists, but where it meets human creativity to build things that were previously impossible.'
         ]
