@@ -88,10 +88,10 @@ export const NODES: NodeData[] = [
     label: 'Extracurriculars',
     items: [
       {
-        title: 'All Things AI',
+        title: 'Society President',
         subtitle: 'University of Birmingham',
         details: [
-          'Founder and Chair of the student society.'
+          'Founder and Chair of the student society All Things AI.'
         ]
       },
       {
