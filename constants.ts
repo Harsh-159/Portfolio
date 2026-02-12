@@ -115,7 +115,7 @@ export const NODES: NodeData[] = [
         //image: 'https://ui-avatars.com/api/?name=Harsh+Yadav&background=bef264&color=0f172a&size=512&font-size=0.3', 
         image:'/my_screenshot.png',
         details: [
-          'This is me, someone who believe the most exciting space in technology right now isn’t just where AI exists, but where it meets human creativity to build things that were previously impossible.'
+          'This is me, someone who believes that the most exciting space in technology right now isn’t just where AI exists, but where it meets human creativity to build things that were previously impossible.'
         ]
       },
       {
