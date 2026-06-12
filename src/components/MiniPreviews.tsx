@@ -22,33 +22,6 @@ function TokenizerPreview() {
   );
 }
 
-function OrderBookPreview() {
-  const rows = [
-    { side: 'sell', w: 0.8 },
-    { side: 'sell', w: 0.5 },
-    { side: 'sell', w: 0.65 },
-    { side: 'buy', w: 0.7 },
-    { side: 'buy', w: 0.45 },
-    { side: 'buy', w: 0.85 },
-  ];
-  return (
-    <div className="space-y-1">
-      {rows.map((r, i) => (
-        <div key={i} className="h-2 w-full overflow-hidden rounded-sm bg-bg/50">
-          <div
-            className={`h-full origin-left rounded-sm ${r.side === 'sell' ? 'bg-sell/40' : 'bg-live/40'}`}
-            style={{
-              width: `${r.w * 100}%`,
-              animation: 'ladder 2.6s ease-in-out infinite',
-              animationDelay: `${i * 0.18}s`,
-            }}
-          />
-        </div>
-      ))}
-    </div>
-  );
-}
-
 function ForecastPreview() {
   return (
     <div className="relative h-14 w-full overflow-hidden">
@@ -161,7 +134,6 @@ function LockedPreview() {
 
 const MAP: Record<PreviewKind, () => ReactElement> = {
   tokenizer: TokenizerPreview,
-  orderbook: OrderBookPreview,
   forecast: ForecastPreview,
   pipeline: PipelinePreview,
   attention: AttentionPreview,

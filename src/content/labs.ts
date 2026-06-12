@@ -4,7 +4,6 @@ export type LabStatus = 'live' | 'in-training' | 'planned';
 
 export type PreviewKind =
   | 'tokenizer'
-  | 'orderbook'
   | 'forecast'
   | 'pipeline'
   | 'attention'
@@ -43,22 +42,13 @@ export const LABS: Lab[] = [
     preview: 'tokenizer',
   },
   {
-    id: 'orderbook',
-    title: 'Order matching engine',
-    route: '/lab/orderbook',
-    status: 'live',
-    claim: 'Microstructure, from scratch',
-    why: 'I understand market microstructure well enough to build the machinery: price-time priority, limit and market orders, partial fills.',
-    source: src('matchingEngine.ts'),
-    preview: 'orderbook',
-  },
-  {
     id: 'forecast',
     title: 'DE_LU Power Intelligence',
     route: '/lab/forecast',
     status: 'live',
     claim: 'Forecasts, signals, and AI desk briefings for German power. 86.7% directional accuracy out of sample.',
     why: 'German day-ahead power price forecasting, trading signals, and automated desk briefings. A five-component daily pipeline built for an energy-trading technical case study.',
+    source: 'https://github.com/Harsh-159/cobblestone_energy_case_study',
     preview: 'forecast',
   },
   {
@@ -82,11 +72,11 @@ export const LABS: Lab[] = [
   },
   {
     id: 'matcher',
-    title: 'Word-level fuzzy matcher',
+    title: 'String matching algorithm',
     route: '/lab/matcher',
     status: 'live',
     claim: 'Built at Oracle',
-    why: 'I built a word-level fuzzy matcher at Oracle for approval-rule search: typo tolerance, word transpositions, insertions and deletions, and a strict penalty for foreign words.',
+    why: 'I built a string matching algorithm at Oracle for approval-rule search: word-level matching with typo tolerance, word transpositions, insertions and deletions, and a strict penalty for foreign words.',
     source: src('fuzzyMatcher.ts'),
     preview: 'matcher',
   },
@@ -97,7 +87,7 @@ export const LABS: Lab[] = [
     status: 'live',
     claim: 'My first full-stack project, remade to run in your browser.',
     why: 'I have been shipping full-stack projects since my CS50 days. This is that stock simulator, remade to trade simulated prices entirely in your browser.',
-    source: src('stockSim.ts'),
+    source: 'https://github.com/Harsh-159/Stock-Simulator',
     preview: 'stocks',
   },
   {

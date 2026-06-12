@@ -77,6 +77,8 @@ function buildReplay(branches: string[], listType: string): Replay {
     selectedBuilderIds.add(b);
   }
   if (branches.includes('UPDATE')) {
+    // UPDATE mirrors ADD: its own condition, semantic and classify.
+    ['update-condition', 'update-semantic', 'update-classify'].forEach((id) => activeIds.add(id));
     const b = `update-builder-${idx + 1}`;
     activeIds.add(b);
     selectedBuilderIds.add(b);

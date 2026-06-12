@@ -1,5 +1,5 @@
 {
-  "_comment": "PLACEHOLDER TOPOLOGY: Harsh must verify this against the real system before deploy. Structure is approximate from memory; node labels are generic role names, no prompts or Oracle data fields. Agent nodes (excluding the SYSTEM terminal): 19.",
+  "_comment": "PLACEHOLDER TOPOLOGY: Harsh must verify this against the real system before deploy. ADD and UPDATE are structurally identical (each: condition, semantic, classify, and one of 7 builders). Agent nodes excluding the SYSTEM terminal total 22; the demo keeps \"19-agent\" as its established name. No prompts or Oracle data fields.",
   "latency": {
     "perAgentSeconds": 5,
     "replaySpeed": 10
@@ -150,10 +150,43 @@
       "guardNote": "Retries generation and validates the built entry shape."
     },
     {
-      "id": "update-builder-1",
-      "label": "UPD: expense approval",
+      "id": "update-condition",
+      "label": "Condition",
       "col": 1,
       "row": 0,
+      "lane": "update",
+      "branch": "UPDATE",
+      "role": "Extracts the conditions the updated rule should apply under.",
+      "guard": "validation",
+      "guardNote": "Validates extracted conditions against allowed fields."
+    },
+    {
+      "id": "update-semantic",
+      "label": "Semantic",
+      "col": 2,
+      "row": 0,
+      "lane": "update",
+      "branch": "UPDATE",
+      "role": "Resolves the updated rule meaning into the shared intermediate representation.",
+      "guard": "retry",
+      "guardNote": "Retries on low-confidence resolutions before proceeding."
+    },
+    {
+      "id": "update-classify",
+      "label": "Classify",
+      "col": 1,
+      "row": 1,
+      "lane": "update",
+      "branch": "UPDATE",
+      "role": "Classifies the request to route it to exactly one of the seven update builders.",
+      "guard": "fallback",
+      "guardNote": "Falls back to a default list when classification is ambiguous."
+    },
+    {
+      "id": "update-builder-1",
+      "label": "UPD: expense approval",
+      "col": 2,
+      "row": 1,
       "lane": "update",
       "branch": "UPDATE",
       "group": "update-builders",
@@ -165,8 +198,8 @@
     {
       "id": "update-builder-2",
       "label": "UPD: manager routing",
-      "col": 1,
-      "row": 1,
+      "col": 2,
+      "row": 2,
       "lane": "update",
       "branch": "UPDATE",
       "group": "update-builders",
@@ -178,8 +211,8 @@
     {
       "id": "update-builder-3",
       "label": "UPD: escalation",
-      "col": 1,
-      "row": 2,
+      "col": 2,
+      "row": 3,
       "lane": "update",
       "branch": "UPDATE",
       "group": "update-builders",
@@ -191,8 +224,8 @@
     {
       "id": "update-builder-4",
       "label": "UPD: purchase order",
-      "col": 1,
-      "row": 3,
+      "col": 2,
+      "row": 4,
       "lane": "update",
       "branch": "UPDATE",
       "group": "update-builders",
@@ -204,8 +237,8 @@
     {
       "id": "update-builder-5",
       "label": "UPD: delegation",
-      "col": 1,
-      "row": 4,
+      "col": 2,
+      "row": 5,
       "lane": "update",
       "branch": "UPDATE",
       "group": "update-builders",
@@ -217,8 +250,8 @@
     {
       "id": "update-builder-6",
       "label": "UPD: notification",
-      "col": 1,
-      "row": 5,
+      "col": 2,
+      "row": 6,
       "lane": "update",
       "branch": "UPDATE",
       "group": "update-builders",
@@ -230,8 +263,8 @@
     {
       "id": "update-builder-7",
       "label": "UPD: audit trail",
-      "col": 1,
-      "row": 6,
+      "col": 2,
+      "row": 7,
       "lane": "update",
       "branch": "UPDATE",
       "group": "update-builders",
@@ -339,6 +372,22 @@
     ],
     [
       "splitter",
+      "update-condition"
+    ],
+    [
+      "splitter",
+      "update-classify"
+    ],
+    [
+      "update-condition",
+      "update-semantic"
+    ],
+    [
+      "update-semantic",
+      "main-page-update"
+    ],
+    [
+      "update-classify",
       "update-builder-1"
     ],
     [
@@ -346,7 +395,7 @@
       "main-page-update"
     ],
     [
-      "splitter",
+      "update-classify",
       "update-builder-2"
     ],
     [
@@ -354,7 +403,7 @@
       "main-page-update"
     ],
     [
-      "splitter",
+      "update-classify",
       "update-builder-3"
     ],
     [
@@ -362,7 +411,7 @@
       "main-page-update"
     ],
     [
-      "splitter",
+      "update-classify",
       "update-builder-4"
     ],
     [
@@ -370,7 +419,7 @@
       "main-page-update"
     ],
     [
-      "splitter",
+      "update-classify",
       "update-builder-5"
     ],
     [
@@ -378,7 +427,7 @@
       "main-page-update"
     ],
     [
-      "splitter",
+      "update-classify",
       "update-builder-6"
     ],
     [
@@ -386,7 +435,7 @@
       "main-page-update"
     ],
     [
-      "splitter",
+      "update-classify",
       "update-builder-7"
     ],
     [

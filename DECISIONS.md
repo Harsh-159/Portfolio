@@ -22,7 +22,7 @@ One line per judgement call made during the rebuild.
 ## Iteration 2 (real-project demos)
 
 - **Stocks reduced motion:** the 2s price tick is an ambient loop, so under reduced motion it is paused and an "advance prices" button appears instead, keeping the sim usable while honouring the loops-stop rule.
-- **P&L and buy/sell colours** reuse `live` (gain/buy) and `sell` (loss/sell), matching the order book's existing buy/sell convention rather than introducing new colours.
+- **P&L and buy/sell colours** reuse `live` (gain/buy) and `sell` (loss/sell) rather than introducing new colours, keeping finance semantics consistent across the site.
 - **Matcher scoring:** word-level Damerau-Levenshtein. Mismatch cost (1.1) is kept above a delete+insert pair (1.0) so unrelated words align as gaps, leaving substitutions for exact/typo/transposition only. The foreign penalty applies to query words of length ≥ 5 that are far from every candidate word, so short connectives like "from" stay cheap (behaviour 4) while irrelevant content words are punished (behaviour 5). Constants are exported for tuning.
 - **Old levenshtein route** redirects to `/lab/matcher` via `<Navigate>`; `levenshtein.ts` and its tests are kept because the matcher reuses the char-level distance.
 - **Pipeline layout** is computed in code from `col`/`row`/`lane` fields in `pipeline.json` (positions are derived, topology/labels/guards/routing stay data-driven). Critical path and wall-clock are computed from the active subgraph, so editing the JSON keeps the summary correct.
@@ -31,3 +31,9 @@ One line per judgement call made during the rebuild.
 - **Briefing PDF detection** checks the response content-type for `pdf`, not just a 200, because a dev SPA fallback returns `index.html` (text/html) for a missing file and would otherwise show the button.
 - **Amber** is used only for the report's `INVALIDATED` state and triggered invalidation flags, mirroring the real report; it is a warning state, distinct from the lime/violet/red tokens.
 - **Signal tiers** are symmetric and exact at the boundaries: +3/+8 → BUY, −3/−8 → SELL, strictly beyond → STRONG_*, and HOLD is the open interval (−3, +3).
+
+## Iteration 3 (project-specific tweaks)
+
+- **UPDATE branch now mirrors ADD** in `pipeline.json` (its own Condition, Semantic and Classify plus one-of-7 builders), so the real agent total is 22. Per request, the "19-agent" name is kept in the title, hero stat, experience bullet and lab card; the replay summary still shows the live active count out of 19.
+- **Order matching engine removed entirely** (page, lab card, route, mini-preview and the `matchingEngine.ts` engine + tests). The matcher demo was renamed to "String matching algorithm".
+- **Demo "View source" links** for Stocks and DE_LU Power Intelligence now point at their real project repos rather than this repo's lib files.

@@ -49,7 +49,7 @@ export const EXPERIENCE: ExperienceEntry[] = [
       },
       { text: 'Built a Chrome extension for prompt testing.' },
       {
-        text: 'Built a word-level fuzzy matcher for approval-rule search.',
+        text: 'Built a string matching algorithm for approval-rule search.',
         href: '/lab/matcher',
       },
     ],
@@ -105,10 +105,11 @@ export const OTHER_PROJECTS: ProjectCard[] = [
     badge: '1st place, UKFinnovator 2026',
   },
   {
-    title: 'Automated AI DeFi trading system',
+    title: 'Automated AI-powered DeFi trading system',
     blurb:
-      'Analyses on-chain data, whale activity and market sentiment to manage a portfolio, with scheduled crash detection and weekly PDF reports.',
+      'A decentralised trading system where specialised AI agents analyse market signals (whale activity, regulations, on-chain data and sentiment) and a central decision agent issues Buy, Sell or Hold calls. It runs a thrice-daily trading workflow on the top boosted tokens, a 15-minute crash detector, and a weekly reporter that emails a generated PDF. Built with OpenAI agents, the DEX Screener and Etherscan APIs, Perplexity Sonar Pro, and MetaMask for execution.',
     href: 'https://github.com/Harsh-159/Automated-AI-Powered-DeFi-Trading-System',
+    badge: 'OpenServ Hackathon',
   },
   {
     title: 'More on GitHub',

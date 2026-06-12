@@ -6,7 +6,6 @@ import Home from './pages/Home';
 
 // Each lab route is a lazy-loaded chunk so the landing bundle stays small.
 const Tokenizer = lazy(() => import('./pages/lab/Tokenizer'));
-const OrderBook = lazy(() => import('./pages/lab/OrderBook'));
 const Forecast = lazy(() => import('./pages/lab/Forecast'));
 const Pipeline = lazy(() => import('./pages/lab/Pipeline'));
 const Attention = lazy(() => import('./pages/lab/Attention'));
@@ -60,7 +59,6 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/lab/tokenizer" element={<Tokenizer />} />
-            <Route path="/lab/orderbook" element={<OrderBook />} />
             <Route path="/lab/forecast" element={<Forecast />} />
             <Route path="/lab/pipeline" element={<Pipeline />} />
             <Route path="/lab/attention" element={<Attention />} />

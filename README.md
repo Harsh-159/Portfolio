@@ -5,11 +5,10 @@ My portfolio, rebuilt around one idea: every technical claim is backed by someth
 Live demos:
 
 - **Tokenizer** (`/lab/tokenizer`) — train byte-pair encoding live, then tokenise anything. Backs my LLM-from-scratch build.
-- **Order book** (`/lab/orderbook`) — a price-time-priority matching engine with a market simulation.
 - **DE_LU Power Intelligence** (`/lab/forecast`) — five tabs: forecast, signals, AI desk briefing, pipeline and QA, and a model comparison for German day-ahead power.
 - **Pipeline** (`/lab/pipeline`) — anonymised replay of the 19-agent approval-rule pipeline I built at Oracle, with routing, parallel branches and a latency model.
 - **Attention** (`/lab/attention`) — causal self-attention, step by step.
-- **Matcher** (`/lab/matcher`) — the word-level fuzzy matcher I built at Oracle, with typo tolerance, transpositions and a foreign-word penalty (`/lab/levenshtein` redirects here).
+- **String matching algorithm** (`/lab/matcher`) — the word-level matcher I built at Oracle, with typo tolerance, transpositions and a foreign-word penalty (`/lab/levenshtein` redirects here).
 - **Stocks** (`/lab/stocks`) — a client-side remake of my CS50 stock simulator, trading simulated prices in the browser.
 
 ## Run it
@@ -34,7 +33,6 @@ npm run test       # vitest run
 src/
   lib/         pure, typed, unit-tested engines (the portfolio-worthy code)
     bpe.ts            byte-pair encoding: char-level training + byte-level applier
-    matchingEngine.ts limit order book with price-time priority
     attention.ts      causal self-attention maths with toy weights
     levenshtein.ts    char-level edit distance (used by the matcher)
     fuzzyMatcher.ts   word-level Damerau-Levenshtein with custom penalties
@@ -53,11 +51,10 @@ Each demo's "View source" link points at its engine in `src/lib/`. The engines h
 | Demo | Claim it backs |
 | --- | --- |
 | Tokenizer | LLM from scratch: byte-level BPE tokenizer, trained on TinyStories V2-GPT4 |
-| Order book | Order matching engine: price-time priority, limit/market, partial fills |
 | DE_LU Power Intelligence | German day-ahead forecasting + signals + AI briefings: 86.7% directional accuracy, walk-forward eval |
 | Pipeline | Oracle: a 19-agent approval-rule generation pipeline |
 | Attention | LLM from scratch: attention implemented from scratch |
-| Matcher | Oracle: a word-level fuzzy matcher for approval-rule search |
+| String matching algorithm | Oracle: a word-level matcher for approval-rule search |
 | Stocks | CS50: a full-stack stock simulator, remade client-side |
 
 ## Editing content (no code changes needed)
