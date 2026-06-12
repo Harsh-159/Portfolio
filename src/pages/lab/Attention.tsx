@@ -143,7 +143,7 @@ export default function Attention() {
                             }}
                           >
                             {step === 3 && isFuture
-                              ? '—'
+                              ? ''
                               : val === -Infinity
                                 ? ''
                                 : step === 4 || step === 5

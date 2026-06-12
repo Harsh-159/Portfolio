@@ -314,7 +314,7 @@ export default function OrderBook() {
 
           <div className="my-1 flex items-center justify-between border-y border-line px-2 py-1 font-mono text-xs text-muted">
             <span>spread</span>
-            <span className="text-fg">{spread !== undefined ? spread.toFixed(0) : '—'}</span>
+            <span className="text-fg">{spread !== undefined ? spread.toFixed(0) : 'n/a'}</span>
           </div>
 
           <div className="flex flex-col">
@@ -325,7 +325,7 @@ export default function OrderBook() {
 
           {snapshot.bids.length === 0 && snapshot.asks.length === 0 && (
             <p className="px-2 py-6 text-center font-mono text-xs text-muted/60">
-              empty book — seed it or submit an order
+              empty book, seed it or submit an order
             </p>
           )}
 

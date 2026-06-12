@@ -206,7 +206,7 @@ function TrainPanel({
 
         <p className="font-mono text-xs text-muted">
           {step} / {total} merges applied
-          {total === 0 && ' — corpus has no repeating pairs yet'}
+          {total === 0 && ': corpus has no repeating pairs yet'}
         </p>
       </div>
 

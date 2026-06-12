@@ -10,7 +10,7 @@ export function Contact() {
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-muted">Get in touch</p>
           <a
             href={`mailto:${LINKS.email}`}
-            className="mt-4 block font-display text-4xl font-semibold tracking-tight transition-colors hover:text-live md:text-6xl"
+            className="mt-4 block break-all font-display text-3xl font-semibold tracking-tight transition-colors hover:text-live sm:text-4xl md:text-6xl"
           >
             {LINKS.email}
           </a>
