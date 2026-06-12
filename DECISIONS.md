@@ -18,3 +18,16 @@ One line per judgement call made during the rebuild.
 - **vitest environment is `node`** for the `src/lib` engine suites, which need no DOM.
 - **`scripts/og.svg` and `.claude/launch.json`** are committed as build/dev helpers.
 - **Reduced motion** is handled both by Framer Motion's `useReducedMotion` (the `Reveal` wrapper renders statically) and a global CSS rule that collapses animation/transition durations, which pauses the CSS-driven loops (live dot, mini-previews).
+
+## Iteration 2 (real-project demos)
+
+- **Stocks reduced motion:** the 2s price tick is an ambient loop, so under reduced motion it is paused and an "advance prices" button appears instead, keeping the sim usable while honouring the loops-stop rule.
+- **P&L and buy/sell colours** reuse `live` (gain/buy) and `sell` (loss/sell), matching the order book's existing buy/sell convention rather than introducing new colours.
+- **Matcher scoring:** word-level Damerau-Levenshtein. Mismatch cost (1.1) is kept above a delete+insert pair (1.0) so unrelated words align as gaps, leaving substitutions for exact/typo/transposition only. The foreign penalty applies to query words of length ≥ 5 that are far from every candidate word, so short connectives like "from" stay cheap (behaviour 4) while irrelevant content words are punished (behaviour 5). Constants are exported for tuning.
+- **Old levenshtein route** redirects to `/lab/matcher` via `<Navigate>`; `levenshtein.ts` and its tests are kept because the matcher reuses the char-level distance.
+- **Pipeline layout** is computed in code from `col`/`row`/`lane` fields in `pipeline.json` (positions are derived, topology/labels/guards/routing stay data-driven). Critical path and wall-clock are computed from the active subgraph, so editing the JSON keeps the summary correct.
+- **Pipeline failure injection** flips one random active agent to `sell` with a retry pulse and appends "· 1 retry" to the summary; it does not change the critical-path wall-clock.
+- **Forecast tabs** are conditionally rendered (mount on selection) rather than `React.lazy`-split, since they are small and already inside the lazy forecast route chunk. The original Forecast tab is the unchanged component, so `forecastData` tests still pass untouched.
+- **Briefing PDF detection** checks the response content-type for `pdf`, not just a 200, because a dev SPA fallback returns `index.html` (text/html) for a missing file and would otherwise show the button.
+- **Amber** is used only for the report's `INVALIDATED` state and triggered invalidation flags, mirroring the real report; it is a warning state, distinct from the lime/violet/red tokens.
+- **Signal tiers** are symmetric and exact at the boundaries: +3/+8 → BUY, −3/−8 → SELL, strictly beyond → STRONG_*, and HOLD is the open interval (−3, +3).

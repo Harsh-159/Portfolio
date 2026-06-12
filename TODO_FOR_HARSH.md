@@ -40,3 +40,5 @@ Things only you can supply. The site works without them (synthetic data, hidden 
 - Read the About bio in `src/content/profile.ts` and adjust anything you would not say out loud.
 - Check the photo crop (`public/harsh.webp`) looks right in the About section.
 - Set the production URL in `index.html` (`og:url`) and the `LINKS.repo` if the repo name differs.
+- Review the fuzzy-matcher penalty constants in `src/lib/fuzzyMatcher.ts` (`MATCHER_CONFIG`) and tune them if the defaults don't match how the real matcher behaved.
+- Review the fictional ticker list in `src/lib/stockSim.ts` (`STOCKS`); they are invented names and must not collide with real symbols you would rather avoid.

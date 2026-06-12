@@ -6,10 +6,11 @@ Live demos:
 
 - **Tokenizer** (`/lab/tokenizer`) — train byte-pair encoding live, then tokenise anything. Backs my LLM-from-scratch build.
 - **Order book** (`/lab/orderbook`) — a price-time-priority matching engine with a market simulation.
-- **Forecast** (`/lab/forecast`) — German day-ahead price forecast explorer over 12,000 hours.
-- **Pipeline** (`/lab/pipeline`) — anonymised replay of the 19-agent pipeline I built at Oracle.
+- **DE_LU Power Intelligence** (`/lab/forecast`) — five tabs: forecast, signals, AI desk briefing, pipeline and QA, and a model comparison for German day-ahead power.
+- **Pipeline** (`/lab/pipeline`) — anonymised replay of the 19-agent approval-rule pipeline I built at Oracle, with routing, parallel branches and a latency model.
 - **Attention** (`/lab/attention`) — causal self-attention, step by step.
-- **Levenshtein** (`/lab/levenshtein`) — the edit-distance matcher I built at Oracle, visualised.
+- **Matcher** (`/lab/matcher`) — the word-level fuzzy matcher I built at Oracle, with typo tolerance, transpositions and a foreign-word penalty (`/lab/levenshtein` redirects here).
+- **Stocks** (`/lab/stocks`) — a client-side remake of my CS50 stock simulator, trading simulated prices in the browser.
 
 ## Run it
 
@@ -35,7 +36,9 @@ src/
     bpe.ts            byte-pair encoding: char-level training + byte-level applier
     matchingEngine.ts limit order book with price-time priority
     attention.ts      causal self-attention maths with toy weights
-    levenshtein.ts    edit distance: DP matrix + backtrace
+    levenshtein.ts    char-level edit distance (used by the matcher)
+    fuzzyMatcher.ts   word-level Damerau-Levenshtein with custom penalties
+    stockSim.ts       seeded price process + portfolio operations
     forecastData.ts   synthetic/real forecast data + directional accuracy
   components/  shared UI (header, footer, status chips, charts, demo chrome)
   sections/    home-page sections
@@ -51,16 +54,17 @@ Each demo's "View source" link points at its engine in `src/lib/`. The engines h
 | --- | --- |
 | Tokenizer | LLM from scratch: byte-level BPE tokenizer, trained on TinyStories V2-GPT4 |
 | Order book | Order matching engine: price-time priority, limit/market, partial fills |
-| Forecast | German day-ahead forecasting: 86.7% directional accuracy, walk-forward eval |
+| DE_LU Power Intelligence | German day-ahead forecasting + signals + AI briefings: 86.7% directional accuracy, walk-forward eval |
 | Pipeline | Oracle: a 19-agent approval-rule generation pipeline |
 | Attention | LLM from scratch: attention implemented from scratch |
-| Levenshtein | Oracle: a Levenshtein-based rule matcher |
+| Matcher | Oracle: a word-level fuzzy matcher for approval-rule search |
+| Stocks | CS50: a full-stack stock simulator, remade client-side |
 
 ## Editing content (no code changes needed)
 
 - **`src/content/buildlog.json`** — the "Now building" strip. Each entry: `id`, `title`, `status` (`live` / `in-progress` / `planned`), optional `date`, `note`, `demo`.
 - **`src/content/changelog.json`** — the footer changelog. Each entry: `date`, `entry`. Newest first.
-- **`src/content/pipeline.json`** — the pipeline DAG (`nodes` with `col`/`role`/`inputs`/`outputs`/`guards`, plus `edges`). Currently a placeholder topology; see `TODO_FOR_HARSH.md`.
+- **`src/content/pipeline.json`** — the 19-agent pipeline graph (`nodes` with `col`/`row`/`lane`/`branch`/`role`/`guard`, plus `edges`, `chips`, `listTypes` and a `latency` model). Reconstructed from memory; verify per `TODO_FOR_HARSH.md`.
 - **`src/content/profile.ts`** — identity, links, experience, education, projects and the About copy.
 - **`src/content/labs.ts`** — the lab catalogue (titles, claims, statuses, source links).
 
@@ -72,7 +76,9 @@ The site ships working with synthetic data and switches to real data automatical
   ```json
   { "format": "bytelevel-bpe", "vocab_size": 0, "merges": [["t", "h"], ["th", "e"]] }
   ```
-- **`public/lab/forecast/results.csv`** — `timestamp,actual,predicted` hourly rows. When present, the chart plots real data and the sample-data badge disappears. The headline stat tiles always show the real offline-evaluation numbers.
+- **`public/lab/forecast/results.csv`** — `timestamp,actual,predicted` hourly rows (export from `oos_predictions.parquet`). When present, the Forecast tab plots real data and the sample-data badge disappears. The stat tiles always show the real offline-evaluation numbers.
+- **`public/lab/forecast/briefing_sample.json`** — already shipped with real values; the Briefing tab renders the report card from it.
+- **`public/lab/forecast/sample_daily_report.pdf`** — when present, the Briefing tab shows a download button; hidden until then.
 - **`public/cv.pdf`** — linked from the header, footer and hero.
 
 ## Notes
