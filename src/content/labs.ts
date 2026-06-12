@@ -9,6 +9,7 @@ export type PreviewKind =
   | 'pipeline'
   | 'attention'
   | 'levenshtein'
+  | 'stocks'
   | 'locked';
 
 export interface Lab {
@@ -88,6 +89,16 @@ export const LABS: Lab[] = [
     why: 'I built a Levenshtein-based string matcher at Oracle for approval-rule matching. Watch the DP matrix fill and backtrace.',
     source: src('levenshtein.ts'),
     preview: 'levenshtein',
+  },
+  {
+    id: 'stocks',
+    title: 'Stock simulator',
+    route: '/lab/stocks',
+    status: 'live',
+    claim: 'My first full-stack project, remade to run in your browser.',
+    why: 'I have been shipping full-stack projects since my CS50 days. This is that stock simulator, remade to trade simulated prices entirely in your browser.',
+    source: src('stockSim.ts'),
+    preview: 'stocks',
   },
   {
     id: 'generation',

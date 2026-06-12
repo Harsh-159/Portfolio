@@ -11,6 +11,7 @@ const Forecast = lazy(() => import('./pages/lab/Forecast'));
 const Pipeline = lazy(() => import('./pages/lab/Pipeline'));
 const Attention = lazy(() => import('./pages/lab/Attention'));
 const Levenshtein = lazy(() => import('./pages/lab/Levenshtein'));
+const Stocks = lazy(() => import('./pages/lab/Stocks'));
 
 function ScrollManager() {
   const { pathname, hash } = useLocation();
@@ -64,6 +65,7 @@ export default function App() {
             <Route path="/lab/pipeline" element={<Pipeline />} />
             <Route path="/lab/attention" element={<Attention />} />
             <Route path="/lab/levenshtein" element={<Levenshtein />} />
+            <Route path="/lab/stocks" element={<Stocks />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

@@ -129,6 +129,26 @@ function LevenshteinPreview() {
   );
 }
 
+function StocksPreview() {
+  return (
+    <div className="relative h-14 w-full overflow-hidden">
+      <svg viewBox="0 0 140 56" className="h-full w-full" preserveAspectRatio="none">
+        <polyline
+          points="0,44 14,40 28,42 42,34 56,38 70,28 84,32 98,20 112,26 126,14 140,18"
+          fill="none"
+          stroke="var(--color-live)"
+          strokeWidth="1"
+          opacity="0.7"
+        />
+      </svg>
+      <span
+        className="absolute right-1 top-3 h-2 w-2 rounded-full bg-live"
+        style={{ animation: 'blink 2s ease-in-out infinite' }}
+      />
+    </div>
+  );
+}
+
 function LockedPreview() {
   return (
     <div className="flex items-center gap-1.5">
@@ -146,6 +166,7 @@ const MAP: Record<PreviewKind, () => ReactElement> = {
   pipeline: PipelinePreview,
   attention: AttentionPreview,
   levenshtein: LevenshteinPreview,
+  stocks: StocksPreview,
   locked: LockedPreview,
 };
 
