@@ -27,7 +27,7 @@ Things only you can supply. The site works without them (synthetic data, hidden 
 ## 4. Real pipeline topology
 
 - **File:** `src/content/pipeline.json`
-- **Action:** replace the placeholder topology (marked with a `_comment`) with the real, still-anonymised graph: node roles, inputs, outputs and the failure mode each guards against. Keep it to the real number of agents and do not include prompts, names or data.
+- **Action:** verify the reconstructed topology (marked with a `_comment`) against the real, still-anonymised system: the splitter, the ADD branch (condition → semantic, and classify → one of 7 list builders), the UPDATE branch (one of 7 builders), the DELETE agent, the SYSTEM page-update terminal, plus each node's `role` and `guard`. The arithmetic must stay at 19 agent nodes (excluding the SYSTEM terminal). Adjust the 7 `listTypes`, the routing, and the request `chips` to match reality. Do not include prompts, names or data fields.
 
 ## 5. Verify before deploy
 

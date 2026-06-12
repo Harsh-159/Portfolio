@@ -1,60 +1,436 @@
 {
-  "_comment": "PLACEHOLDER TOPOLOGY: Harsh must edit this to match the real system before deploy. Names, roles and guards below are an anonymised reconstruction, not the production graph.",
+  "_comment": "PLACEHOLDER TOPOLOGY: Harsh must verify this against the real system before deploy. Structure is approximate from memory; node labels are generic role names, no prompts or Oracle data fields. Agent nodes (excluding the SYSTEM terminal): 19.",
+  "latency": {
+    "perAgentSeconds": 5,
+    "replaySpeed": 10
+  },
+  "listTypes": [
+    "expense approval",
+    "manager routing",
+    "escalation",
+    "purchase order",
+    "delegation",
+    "notification",
+    "audit trail"
+  ],
   "nodes": [
-    { "id": "intake", "label": "Intake", "col": 0, "role": "Accepts the raw approval-rule request and request metadata.", "inputs": "Raw user request", "outputs": "Structured request envelope", "guards": "Malformed or empty requests entering the pipeline." },
-    { "id": "normalise", "label": "Normalisation", "col": 1, "role": "Canonicalises fields, units and entity references.", "inputs": "Structured request envelope", "outputs": "Normalised request", "guards": "Inconsistent casing, synonyms and unit drift." },
-    { "id": "planner", "label": "Planner", "col": 2, "role": "Decomposes the request into retrieval and drafting subtasks.", "inputs": "Normalised request", "outputs": "Task plan", "guards": "Over-broad requests that would blow the latency budget." },
-
-    { "id": "retriever-rules", "label": "Rule retriever", "col": 3, "role": "Pulls related existing approval rules for grounding.", "inputs": "Task plan", "outputs": "Candidate rules", "guards": "Hallucinated rule references." },
-    { "id": "retriever-schema", "label": "Schema retriever", "col": 3, "role": "Fetches the valid field and operator schema.", "inputs": "Task plan", "outputs": "Schema context", "guards": "Drafts using fields that do not exist." },
-    { "id": "retriever-examples", "label": "Example retriever", "col": 3, "role": "Finds nearest worked examples for few-shot grounding.", "inputs": "Task plan", "outputs": "Example context", "guards": "Style and format drift from house conventions." },
-
-    { "id": "draft-a", "label": "Draft generator A", "col": 4, "role": "Generates a candidate rule from the grounded context.", "inputs": "Plan + retrieved context", "outputs": "Candidate draft A", "guards": "Single-sample variance by drafting in parallel." },
-    { "id": "draft-b", "label": "Draft generator B", "col": 4, "role": "Generates an alternative candidate under a different prompt.", "inputs": "Plan + retrieved context", "outputs": "Candidate draft B", "guards": "Single-sample variance by drafting in parallel." },
-
-    { "id": "validator-syntax", "label": "Syntax validator", "col": 5, "role": "Checks each draft parses against the rule grammar.", "inputs": "Candidate drafts", "outputs": "Syntax report", "guards": "Unparseable output reaching production." },
-    { "id": "validator-semantics", "label": "Semantic validator", "col": 5, "role": "Checks the rule means what the request asked for.", "inputs": "Candidate drafts", "outputs": "Semantic report", "guards": "Syntactically valid but wrong rules." },
-    { "id": "validator-policy", "label": "Policy validator", "col": 5, "role": "Checks the rule against guardrail and policy constraints.", "inputs": "Candidate drafts", "outputs": "Policy report", "guards": "Rules that violate organisational policy." },
-
-    { "id": "repair", "label": "Repair agent", "col": 6, "role": "Rewrites drafts to fix issues the validators flagged.", "inputs": "Drafts + validator reports", "outputs": "Repaired drafts", "guards": "Discarding a near-correct draft instead of fixing it." },
-    { "id": "recheck", "label": "Re-validation", "col": 7, "role": "Re-runs validation on repaired drafts, looping back if needed.", "inputs": "Repaired drafts", "outputs": "Validated drafts", "guards": "Shipping a repair that introduced a new error." },
-
-    { "id": "ranker", "label": "Ranker", "col": 8, "role": "Scores and ranks the validated candidates.", "inputs": "Validated drafts", "outputs": "Ranked candidates", "guards": "Picking a weaker candidate by accident." },
-    { "id": "explainer", "label": "Explainer", "col": 9, "role": "Writes a plain-language rationale for the chosen rule.", "inputs": "Top candidate", "outputs": "Rule + rationale", "guards": "Unexplained, untrusted output." },
-    { "id": "formatter", "label": "Formatter", "col": 10, "role": "Serialises the result into the target JSON contract.", "inputs": "Rule + rationale", "outputs": "Formatted payload", "guards": "Downstream contract violations." },
-
-    { "id": "audit", "label": "Audit", "col": 11, "role": "Records inputs, outputs and decisions for traceability.", "inputs": "Formatted payload", "outputs": "Audited payload", "guards": "Unauditable decisions." },
-    { "id": "publish", "label": "Publish", "col": 12, "role": "Returns the final rule to the caller.", "inputs": "Audited payload", "outputs": "Approval rule", "guards": "Partial or duplicated delivery." },
-    { "id": "telemetry", "label": "Telemetry", "col": 13, "role": "Emits latency and quality metrics for monitoring.", "inputs": "Pipeline trace", "outputs": "Metrics", "guards": "Silent regressions going unnoticed." }
+    {
+      "id": "splitter",
+      "label": "Splitter",
+      "col": 0,
+      "row": 0,
+      "lane": "splitter",
+      "branch": "splitter",
+      "role": "Decomposes the request into a JSON payload of ADD, UPDATE and DELETE operations handled in parallel.",
+      "guard": "validation",
+      "guardNote": "Rejects malformed requests and enforces the payload schema before fan-out."
+    },
+    {
+      "id": "condition",
+      "label": "Condition",
+      "col": 1,
+      "row": 0,
+      "lane": "add",
+      "branch": "ADD",
+      "role": "Extracts the conditions the new rule should apply under.",
+      "guard": "validation",
+      "guardNote": "Validates extracted conditions against allowed fields."
+    },
+    {
+      "id": "semantic",
+      "label": "Semantic",
+      "col": 2,
+      "row": 0,
+      "lane": "add",
+      "branch": "ADD",
+      "role": "Resolves the rule meaning into the shared intermediate representation.",
+      "guard": "retry",
+      "guardNote": "Retries on low-confidence resolutions before proceeding."
+    },
+    {
+      "id": "classify",
+      "label": "Classify",
+      "col": 1,
+      "row": 1,
+      "lane": "add",
+      "branch": "ADD",
+      "role": "Classifies the request to route it to exactly one of the seven list builders.",
+      "guard": "fallback",
+      "guardNote": "Falls back to a default list when classification is ambiguous."
+    },
+    {
+      "id": "add-builder-1",
+      "label": "ADD: expense approval",
+      "col": 2,
+      "row": 1,
+      "lane": "add",
+      "branch": "ADD",
+      "group": "add-builders",
+      "listType": "expense approval",
+      "role": "Builds the ADD result for the expense approval list.",
+      "guard": "retry",
+      "guardNote": "Retries generation and validates the built entry shape."
+    },
+    {
+      "id": "add-builder-2",
+      "label": "ADD: manager routing",
+      "col": 2,
+      "row": 2,
+      "lane": "add",
+      "branch": "ADD",
+      "group": "add-builders",
+      "listType": "manager routing",
+      "role": "Builds the ADD result for the manager routing list.",
+      "guard": "retry",
+      "guardNote": "Retries generation and validates the built entry shape."
+    },
+    {
+      "id": "add-builder-3",
+      "label": "ADD: escalation",
+      "col": 2,
+      "row": 3,
+      "lane": "add",
+      "branch": "ADD",
+      "group": "add-builders",
+      "listType": "escalation",
+      "role": "Builds the ADD result for the escalation list.",
+      "guard": "retry",
+      "guardNote": "Retries generation and validates the built entry shape."
+    },
+    {
+      "id": "add-builder-4",
+      "label": "ADD: purchase order",
+      "col": 2,
+      "row": 4,
+      "lane": "add",
+      "branch": "ADD",
+      "group": "add-builders",
+      "listType": "purchase order",
+      "role": "Builds the ADD result for the purchase order list.",
+      "guard": "retry",
+      "guardNote": "Retries generation and validates the built entry shape."
+    },
+    {
+      "id": "add-builder-5",
+      "label": "ADD: delegation",
+      "col": 2,
+      "row": 5,
+      "lane": "add",
+      "branch": "ADD",
+      "group": "add-builders",
+      "listType": "delegation",
+      "role": "Builds the ADD result for the delegation list.",
+      "guard": "retry",
+      "guardNote": "Retries generation and validates the built entry shape."
+    },
+    {
+      "id": "add-builder-6",
+      "label": "ADD: notification",
+      "col": 2,
+      "row": 6,
+      "lane": "add",
+      "branch": "ADD",
+      "group": "add-builders",
+      "listType": "notification",
+      "role": "Builds the ADD result for the notification list.",
+      "guard": "retry",
+      "guardNote": "Retries generation and validates the built entry shape."
+    },
+    {
+      "id": "add-builder-7",
+      "label": "ADD: audit trail",
+      "col": 2,
+      "row": 7,
+      "lane": "add",
+      "branch": "ADD",
+      "group": "add-builders",
+      "listType": "audit trail",
+      "role": "Builds the ADD result for the audit trail list.",
+      "guard": "retry",
+      "guardNote": "Retries generation and validates the built entry shape."
+    },
+    {
+      "id": "update-builder-1",
+      "label": "UPD: expense approval",
+      "col": 1,
+      "row": 0,
+      "lane": "update",
+      "branch": "UPDATE",
+      "group": "update-builders",
+      "listType": "expense approval",
+      "role": "Builds the UPDATE result for the expense approval list, using its own prompt.",
+      "guard": "retry",
+      "guardNote": "Retries generation and reconciles against the existing list."
+    },
+    {
+      "id": "update-builder-2",
+      "label": "UPD: manager routing",
+      "col": 1,
+      "row": 1,
+      "lane": "update",
+      "branch": "UPDATE",
+      "group": "update-builders",
+      "listType": "manager routing",
+      "role": "Builds the UPDATE result for the manager routing list, using its own prompt.",
+      "guard": "retry",
+      "guardNote": "Retries generation and reconciles against the existing list."
+    },
+    {
+      "id": "update-builder-3",
+      "label": "UPD: escalation",
+      "col": 1,
+      "row": 2,
+      "lane": "update",
+      "branch": "UPDATE",
+      "group": "update-builders",
+      "listType": "escalation",
+      "role": "Builds the UPDATE result for the escalation list, using its own prompt.",
+      "guard": "retry",
+      "guardNote": "Retries generation and reconciles against the existing list."
+    },
+    {
+      "id": "update-builder-4",
+      "label": "UPD: purchase order",
+      "col": 1,
+      "row": 3,
+      "lane": "update",
+      "branch": "UPDATE",
+      "group": "update-builders",
+      "listType": "purchase order",
+      "role": "Builds the UPDATE result for the purchase order list, using its own prompt.",
+      "guard": "retry",
+      "guardNote": "Retries generation and reconciles against the existing list."
+    },
+    {
+      "id": "update-builder-5",
+      "label": "UPD: delegation",
+      "col": 1,
+      "row": 4,
+      "lane": "update",
+      "branch": "UPDATE",
+      "group": "update-builders",
+      "listType": "delegation",
+      "role": "Builds the UPDATE result for the delegation list, using its own prompt.",
+      "guard": "retry",
+      "guardNote": "Retries generation and reconciles against the existing list."
+    },
+    {
+      "id": "update-builder-6",
+      "label": "UPD: notification",
+      "col": 1,
+      "row": 5,
+      "lane": "update",
+      "branch": "UPDATE",
+      "group": "update-builders",
+      "listType": "notification",
+      "role": "Builds the UPDATE result for the notification list, using its own prompt.",
+      "guard": "retry",
+      "guardNote": "Retries generation and reconciles against the existing list."
+    },
+    {
+      "id": "update-builder-7",
+      "label": "UPD: audit trail",
+      "col": 1,
+      "row": 6,
+      "lane": "update",
+      "branch": "UPDATE",
+      "group": "update-builders",
+      "listType": "audit trail",
+      "role": "Builds the UPDATE result for the audit trail list, using its own prompt.",
+      "guard": "retry",
+      "guardNote": "Retries generation and reconciles against the existing list."
+    },
+    {
+      "id": "delete",
+      "label": "Delete",
+      "col": 1,
+      "row": 0,
+      "lane": "delete",
+      "branch": "DELETE",
+      "role": "Removes the targeted rule and reconciles dependent entries.",
+      "guard": "validation",
+      "guardNote": "Confirms the target exists before removal."
+    },
+    {
+      "id": "main-page-update",
+      "label": "main: page update",
+      "col": 3,
+      "row": 0,
+      "lane": "system",
+      "branch": "system",
+      "system": true,
+      "role": "Merges all branch outputs and updates the page.",
+      "guard": "validation",
+      "guardNote": "Validates the merged payload before committing the page update."
+    }
   ],
   "edges": [
-    ["intake", "normalise"],
-    ["normalise", "planner"],
-    ["planner", "retriever-rules"],
-    ["planner", "retriever-schema"],
-    ["planner", "retriever-examples"],
-    ["retriever-rules", "draft-a"],
-    ["retriever-rules", "draft-b"],
-    ["retriever-schema", "draft-a"],
-    ["retriever-schema", "draft-b"],
-    ["retriever-examples", "draft-a"],
-    ["retriever-examples", "draft-b"],
-    ["draft-a", "validator-syntax"],
-    ["draft-a", "validator-semantics"],
-    ["draft-a", "validator-policy"],
-    ["draft-b", "validator-syntax"],
-    ["draft-b", "validator-semantics"],
-    ["draft-b", "validator-policy"],
-    ["validator-syntax", "repair"],
-    ["validator-semantics", "repair"],
-    ["validator-policy", "repair"],
-    ["repair", "recheck"],
-    ["recheck", "repair"],
-    ["recheck", "ranker"],
-    ["ranker", "explainer"],
-    ["explainer", "formatter"],
-    ["formatter", "audit"],
-    ["audit", "publish"],
-    ["publish", "telemetry"]
+    [
+      "splitter",
+      "condition"
+    ],
+    [
+      "splitter",
+      "classify"
+    ],
+    [
+      "condition",
+      "semantic"
+    ],
+    [
+      "semantic",
+      "main-page-update"
+    ],
+    [
+      "classify",
+      "add-builder-1"
+    ],
+    [
+      "add-builder-1",
+      "main-page-update"
+    ],
+    [
+      "classify",
+      "add-builder-2"
+    ],
+    [
+      "add-builder-2",
+      "main-page-update"
+    ],
+    [
+      "classify",
+      "add-builder-3"
+    ],
+    [
+      "add-builder-3",
+      "main-page-update"
+    ],
+    [
+      "classify",
+      "add-builder-4"
+    ],
+    [
+      "add-builder-4",
+      "main-page-update"
+    ],
+    [
+      "classify",
+      "add-builder-5"
+    ],
+    [
+      "add-builder-5",
+      "main-page-update"
+    ],
+    [
+      "classify",
+      "add-builder-6"
+    ],
+    [
+      "add-builder-6",
+      "main-page-update"
+    ],
+    [
+      "classify",
+      "add-builder-7"
+    ],
+    [
+      "add-builder-7",
+      "main-page-update"
+    ],
+    [
+      "splitter",
+      "update-builder-1"
+    ],
+    [
+      "update-builder-1",
+      "main-page-update"
+    ],
+    [
+      "splitter",
+      "update-builder-2"
+    ],
+    [
+      "update-builder-2",
+      "main-page-update"
+    ],
+    [
+      "splitter",
+      "update-builder-3"
+    ],
+    [
+      "update-builder-3",
+      "main-page-update"
+    ],
+    [
+      "splitter",
+      "update-builder-4"
+    ],
+    [
+      "update-builder-4",
+      "main-page-update"
+    ],
+    [
+      "splitter",
+      "update-builder-5"
+    ],
+    [
+      "update-builder-5",
+      "main-page-update"
+    ],
+    [
+      "splitter",
+      "update-builder-6"
+    ],
+    [
+      "update-builder-6",
+      "main-page-update"
+    ],
+    [
+      "splitter",
+      "update-builder-7"
+    ],
+    [
+      "update-builder-7",
+      "main-page-update"
+    ],
+    [
+      "splitter",
+      "delete"
+    ],
+    [
+      "delete",
+      "main-page-update"
+    ]
+  ],
+  "chips": [
+    {
+      "id": "add",
+      "label": "Add a rule to the expense approval list",
+      "branches": [
+        "ADD"
+      ]
+    },
+    {
+      "id": "update",
+      "label": "Update the manager routing list",
+      "branches": [
+        "UPDATE"
+      ]
+    },
+    {
+      "id": "delete",
+      "label": "Delete the old escalation rule",
+      "branches": [
+        "DELETE"
+      ]
+    },
+    {
+      "id": "add-delete",
+      "label": "Add a rule and delete another",
+      "branches": [
+        "ADD",
+        "DELETE"
+      ]
+    }
   ]
 }
