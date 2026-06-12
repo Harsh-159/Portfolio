@@ -1,0 +1,60 @@
+{
+  "_comment": "PLACEHOLDER TOPOLOGY: Harsh must edit this to match the real system before deploy. Names, roles and guards below are an anonymised reconstruction, not the production graph.",
+  "nodes": [
+    { "id": "intake", "label": "Intake", "col": 0, "role": "Accepts the raw approval-rule request and request metadata.", "inputs": "Raw user request", "outputs": "Structured request envelope", "guards": "Malformed or empty requests entering the pipeline." },
+    { "id": "normalise", "label": "Normalisation", "col": 1, "role": "Canonicalises fields, units and entity references.", "inputs": "Structured request envelope", "outputs": "Normalised request", "guards": "Inconsistent casing, synonyms and unit drift." },
+    { "id": "planner", "label": "Planner", "col": 2, "role": "Decomposes the request into retrieval and drafting subtasks.", "inputs": "Normalised request", "outputs": "Task plan", "guards": "Over-broad requests that would blow the latency budget." },
+
+    { "id": "retriever-rules", "label": "Rule retriever", "col": 3, "role": "Pulls related existing approval rules for grounding.", "inputs": "Task plan", "outputs": "Candidate rules", "guards": "Hallucinated rule references." },
+    { "id": "retriever-schema", "label": "Schema retriever", "col": 3, "role": "Fetches the valid field and operator schema.", "inputs": "Task plan", "outputs": "Schema context", "guards": "Drafts using fields that do not exist." },
+    { "id": "retriever-examples", "label": "Example retriever", "col": 3, "role": "Finds nearest worked examples for few-shot grounding.", "inputs": "Task plan", "outputs": "Example context", "guards": "Style and format drift from house conventions." },
+
+    { "id": "draft-a", "label": "Draft generator A", "col": 4, "role": "Generates a candidate rule from the grounded context.", "inputs": "Plan + retrieved context", "outputs": "Candidate draft A", "guards": "Single-sample variance by drafting in parallel." },
+    { "id": "draft-b", "label": "Draft generator B", "col": 4, "role": "Generates an alternative candidate under a different prompt.", "inputs": "Plan + retrieved context", "outputs": "Candidate draft B", "guards": "Single-sample variance by drafting in parallel." },
+
+    { "id": "validator-syntax", "label": "Syntax validator", "col": 5, "role": "Checks each draft parses against the rule grammar.", "inputs": "Candidate drafts", "outputs": "Syntax report", "guards": "Unparseable output reaching production." },
+    { "id": "validator-semantics", "label": "Semantic validator", "col": 5, "role": "Checks the rule means what the request asked for.", "inputs": "Candidate drafts", "outputs": "Semantic report", "guards": "Syntactically valid but wrong rules." },
+    { "id": "validator-policy", "label": "Policy validator", "col": 5, "role": "Checks the rule against guardrail and policy constraints.", "inputs": "Candidate drafts", "outputs": "Policy report", "guards": "Rules that violate organisational policy." },
+
+    { "id": "repair", "label": "Repair agent", "col": 6, "role": "Rewrites drafts to fix issues the validators flagged.", "inputs": "Drafts + validator reports", "outputs": "Repaired drafts", "guards": "Discarding a near-correct draft instead of fixing it." },
+    { "id": "recheck", "label": "Re-validation", "col": 7, "role": "Re-runs validation on repaired drafts, looping back if needed.", "inputs": "Repaired drafts", "outputs": "Validated drafts", "guards": "Shipping a repair that introduced a new error." },
+
+    { "id": "ranker", "label": "Ranker", "col": 8, "role": "Scores and ranks the validated candidates.", "inputs": "Validated drafts", "outputs": "Ranked candidates", "guards": "Picking a weaker candidate by accident." },
+    { "id": "explainer", "label": "Explainer", "col": 9, "role": "Writes a plain-language rationale for the chosen rule.", "inputs": "Top candidate", "outputs": "Rule + rationale", "guards": "Unexplained, untrusted output." },
+    { "id": "formatter", "label": "Formatter", "col": 10, "role": "Serialises the result into the target JSON contract.", "inputs": "Rule + rationale", "outputs": "Formatted payload", "guards": "Downstream contract violations." },
+
+    { "id": "audit", "label": "Audit", "col": 11, "role": "Records inputs, outputs and decisions for traceability.", "inputs": "Formatted payload", "outputs": "Audited payload", "guards": "Unauditable decisions." },
+    { "id": "publish", "label": "Publish", "col": 12, "role": "Returns the final rule to the caller.", "inputs": "Audited payload", "outputs": "Approval rule", "guards": "Partial or duplicated delivery." },
+    { "id": "telemetry", "label": "Telemetry", "col": 13, "role": "Emits latency and quality metrics for monitoring.", "inputs": "Pipeline trace", "outputs": "Metrics", "guards": "Silent regressions going unnoticed." }
+  ],
+  "edges": [
+    ["intake", "normalise"],
+    ["normalise", "planner"],
+    ["planner", "retriever-rules"],
+    ["planner", "retriever-schema"],
+    ["planner", "retriever-examples"],
+    ["retriever-rules", "draft-a"],
+    ["retriever-rules", "draft-b"],
+    ["retriever-schema", "draft-a"],
+    ["retriever-schema", "draft-b"],
+    ["retriever-examples", "draft-a"],
+    ["retriever-examples", "draft-b"],
+    ["draft-a", "validator-syntax"],
+    ["draft-a", "validator-semantics"],
+    ["draft-a", "validator-policy"],
+    ["draft-b", "validator-syntax"],
+    ["draft-b", "validator-semantics"],
+    ["draft-b", "validator-policy"],
+    ["validator-syntax", "repair"],
+    ["validator-semantics", "repair"],
+    ["validator-policy", "repair"],
+    ["repair", "recheck"],
+    ["recheck", "repair"],
+    ["recheck", "ranker"],
+    ["ranker", "explainer"],
+    ["explainer", "formatter"],
+    ["formatter", "audit"],
+    ["audit", "publish"],
+    ["publish", "telemetry"]
+  ]
+}

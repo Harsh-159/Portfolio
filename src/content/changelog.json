@@ -1,0 +1,6 @@
+[
+  {
+    "date": "2026-06-12",
+    "entry": "Rebuilt the site as a live lab: tokenizer, order book, forecast, pipeline, attention and Levenshtein demos."
+  }
+]
