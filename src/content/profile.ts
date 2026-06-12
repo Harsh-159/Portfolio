@@ -49,8 +49,8 @@ export const EXPERIENCE: ExperienceEntry[] = [
       },
       { text: 'Built a Chrome extension for prompt testing.' },
       {
-        text: 'Built a Levenshtein-based string matcher for rule matching.',
-        href: '/lab/levenshtein',
+        text: 'Built a word-level fuzzy matcher for approval-rule search.',
+        href: '/lab/matcher',
       },
     ],
   },

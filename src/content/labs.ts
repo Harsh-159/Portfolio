@@ -8,7 +8,7 @@ export type PreviewKind =
   | 'forecast'
   | 'pipeline'
   | 'attention'
-  | 'levenshtein'
+  | 'matcher'
   | 'stocks'
   | 'locked';
 
@@ -81,14 +81,14 @@ export const LABS: Lab[] = [
     preview: 'attention',
   },
   {
-    id: 'levenshtein',
-    title: 'Edit distance visualiser',
-    route: '/lab/levenshtein',
+    id: 'matcher',
+    title: 'Word-level fuzzy matcher',
+    route: '/lab/matcher',
     status: 'live',
     claim: 'Built at Oracle',
-    why: 'I built a Levenshtein-based string matcher at Oracle for approval-rule matching. Watch the DP matrix fill and backtrace.',
-    source: src('levenshtein.ts'),
-    preview: 'levenshtein',
+    why: 'I built a word-level fuzzy matcher at Oracle for approval-rule search: typo tolerance, word transpositions, insertions and deletions, and a strict penalty for foreign words.',
+    source: src('fuzzyMatcher.ts'),
+    preview: 'matcher',
   },
   {
     id: 'stocks',

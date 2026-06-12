@@ -108,7 +108,7 @@ function AttentionPreview() {
   );
 }
 
-function LevenshteinPreview() {
+function MatcherPreview() {
   return (
     <div className="grid grid-cols-6 gap-1">
       {Array.from({ length: 18 }).map((_, i) => {
@@ -165,7 +165,7 @@ const MAP: Record<PreviewKind, () => ReactElement> = {
   forecast: ForecastPreview,
   pipeline: PipelinePreview,
   attention: AttentionPreview,
-  levenshtein: LevenshteinPreview,
+  matcher: MatcherPreview,
   stocks: StocksPreview,
   locked: LockedPreview,
 };
