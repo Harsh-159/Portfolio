@@ -51,11 +51,22 @@ Sanity check: the site validates `format === "bytelevel-bpe"`, a numeric `vocab_
 
 ## 2. Forecast → `public/lab/forecast/results.csv`
 
-Hourly rows with the header `timestamp,actual,predicted`. `timestamp` can be ISO 8601 or unix seconds.
+Hourly rows with the header `timestamp,actual,predicted`. `timestamp` can be ISO 8601 or unix seconds. The real series comes from the project's `data/processed/oos_predictions.parquet`.
 
 ```python
-# df has a DatetimeIndex and columns "actual", "predicted".
-df.to_csv("public/lab/forecast/results.csv", columns=["actual", "predicted"], index_label="timestamp")
+import pandas as pd
+
+# Read the out-of-sample predictions parquet.
+df = pd.read_parquet("data/processed/oos_predictions.parquet")
+
+# Select and rename to the contract. Adjust the source column names if yours differ
+# (e.g. "y_true"/"y_pred" or "price_actual"/"price_pred").
+out = df.rename(columns={"actual": "actual", "predicted": "predicted"})[["actual", "predicted"]]
+out.to_csv("public/lab/forecast/results.csv", index_label="timestamp")
 ```
 
-Once this file is present, the chart plots your real series and the "sample data" badge disappears. The headline stat tiles (86.7%, 12,000 h, etc.) come from your offline evaluation and are shown regardless.
+Once this file is present, the Forecast tab plots your real series and the "sample data" badge disappears. The headline stat tiles (Hourly MAE 13.6, 86.7% directional accuracy, etc.) come from your offline evaluation and are shown regardless.
+
+## 3. Daily report PDF → `public/lab/forecast/sample_daily_report.pdf`
+
+Drop one real generated PDF report here. When present, the Briefing tab shows a "Download a real generated report (PDF)" button; when absent, the button is hidden. The HTML briefing card itself is always rendered from `public/lab/forecast/briefing_sample.json`.

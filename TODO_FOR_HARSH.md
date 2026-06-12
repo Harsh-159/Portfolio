@@ -16,8 +16,13 @@ Things only you can supply. The site works without them (synthetic data, hidden 
 
 - **Destination:** `public/lab/forecast/results.csv`
 - **Format:** header `timestamp,actual,predicted`, one hourly row each. `timestamp` may be ISO 8601 or unix seconds.
-- **Effect:** the chart plots your real walk-forward series and the "sample data" badge disappears. (The stat tiles already show the real numbers.)
-- **How:** pandas one-liner in `docs/EXPORT_GUIDE.md`.
+- **Effect:** the Forecast tab plots your real walk-forward series and the "sample data" badge disappears. (The stat tiles already show the real numbers.)
+- **How:** pandas snippet reading `data/processed/oos_predictions.parquet` in `docs/EXPORT_GUIDE.md`.
+
+## 2b. Daily report PDF
+
+- **Destination:** `public/lab/forecast/sample_daily_report.pdf`
+- **Effect:** the Briefing tab shows a "Download a real generated report (PDF)" button. While absent, the button stays hidden (the HTML briefing card still renders from `briefing_sample.json`).
 
 ## 3. CV
 

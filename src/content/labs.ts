@@ -54,11 +54,11 @@ export const LABS: Lab[] = [
   },
   {
     id: 'forecast',
-    title: 'Power price forecast explorer',
+    title: 'DE_LU Power Intelligence',
     route: '/lab/forecast',
     status: 'live',
-    claim: 'German day-ahead forecasting',
-    why: '86.7% directional accuracy on a 12,000-hour walk-forward out-of-sample evaluation of German day-ahead electricity prices.',
+    claim: 'Forecasts, signals, and AI desk briefings for German power. 86.7% directional accuracy out of sample.',
+    why: 'German day-ahead power price forecasting, trading signals, and automated desk briefings. A five-component daily pipeline built for an energy-trading technical case study.',
     preview: 'forecast',
   },
   {
