@@ -38,6 +38,7 @@ export function Hero() {
           </a>
           <a
             href={LINKS.cv}
+            download="Harsh-Yadav-CV.pdf"
             className="rounded-md border border-line px-5 py-2.5 font-mono text-sm text-fg transition-colors hover:border-muted"
           >
             Download CV

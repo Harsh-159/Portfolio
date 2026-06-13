@@ -34,6 +34,7 @@ export function Contact() {
             </a>
             <a
               href={LINKS.cv}
+              download="Harsh-Yadav-CV.pdf"
               className="inline-flex items-center gap-2 rounded-md border border-line px-4 py-2 font-mono text-sm text-muted transition-colors hover:text-fg"
             >
               Download CV

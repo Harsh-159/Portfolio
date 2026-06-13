@@ -32,6 +32,7 @@ export function Footer() {
             </a>
             <a
               href={LINKS.cv}
+              download="Harsh-Yadav-CV.pdf"
               className="inline-flex items-center gap-2 font-mono text-sm text-muted transition-colors hover:text-fg"
             >
               <FileText size={16} aria-hidden="true" /> CV

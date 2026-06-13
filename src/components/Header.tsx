@@ -34,6 +34,7 @@ export function Header() {
 
         <a
           href={LINKS.cv}
+          download="Harsh-Yadav-CV.pdf"
           className="rounded-md border border-line px-3 py-1.5 font-mono text-sm text-muted transition-colors hover:border-muted hover:text-fg"
         >
           CV

@@ -24,15 +24,15 @@ Things only you can supply. The site works without them (synthetic data, hidden 
 - **Destination:** `public/lab/forecast/sample_daily_report.pdf`
 - **Effect:** the Briefing tab shows a "Download a real generated report (PDF)" button. While absent, the button stays hidden (the HTML briefing card still renders from `briefing_sample.json`).
 
-## 3. CV
+## 3. CV (done)
 
-- **Destination:** `public/cv.pdf`
-- **Effect:** the header/footer/hero CV links resolve. Until then they 404.
+- **File:** `public/cv.pdf` is in place; the header, footer, hero and contact links download it as `Harsh-Yadav-CV.pdf`.
+- **To update:** replace `public/cv.pdf` with a new file (keep the same path). To change the downloaded filename, edit the `download="Harsh-Yadav-CV.pdf"` attribute on the four CV links (Header, Footer, Hero, Contact).
 
 ## 4. Real pipeline topology
 
 - **File:** `src/content/pipeline.json`
-- **Action:** verify the reconstructed topology (marked with a `_comment`) against the real, still-anonymised system: the splitter, the ADD branch (condition → semantic, and classify → one of 7 list builders), the UPDATE branch (one of 7 builders), the DELETE agent, the SYSTEM page-update terminal, plus each node's `role` and `guard`. The arithmetic must stay at 19 agent nodes (excluding the SYSTEM terminal). Adjust the 7 `listTypes`, the routing, and the request `chips` to match reality. Do not include prompts, names or data fields.
+- **Action:** verify the reconstructed topology (marked with a `_comment`) against the real, still-anonymised system: the splitter, the ADD and UPDATE branches (now structurally identical: each has condition → semantic, and classify → one of 7 list builders), the DELETE agent, the SYSTEM page-update terminal, plus each node's `role` and `guard`. This totals 22 agent nodes (excluding the SYSTEM terminal); the demo keeps "19-agent" as its display name. Adjust the 7 `listTypes`, the routing, and the request `chips` to match reality. Do not include prompts, names or data fields.
 
 ## 5. Verify before deploy
 
