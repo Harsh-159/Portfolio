@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1E293B" stroke-width="1" opacity="0.5"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="1200" fill="#0A0F1E"/>
+  <!-- OG content occupies the centred 1200x630 band (y 285..915). -->
+  <g transform="translate(0,285)">
+    <rect width="1200" height="630" fill="url(#grid)"/>
+
+    <g font-family="'Helvetica Neue', Helvetica, Arial, sans-serif">
+      <text x="80" y="100" font-size="30" font-weight="700" fill="#E2E8F0">harsh.yadav</text>
+      <text x="300" y="100" font-size="18" letter-spacing="3" fill="#BEF264" font-family="Menlo, monospace">LIVE_LAB</text>
+
+      <text x="78" y="300" font-size="92" font-weight="700" fill="#E2E8F0">Don&apos;t read my CV.</text>
+      <text x="78" y="408" font-size="92" font-weight="700" fill="#E2E8F0">Run it.</text>
+
+      <text x="80" y="560" font-size="25" fill="#94A3B8">AI engineer / LLM systems and evaluation / interactive demos you can run</text>
+    </g>
+
+    <circle cx="368" cy="382" r="13" fill="#BEF264"/>
+  </g>
+</svg>

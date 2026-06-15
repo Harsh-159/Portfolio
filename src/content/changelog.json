@@ -1,0 +1,10 @@
+[
+  {
+    "date": "2026-06-13",
+    "entry": "Added the stock simulator, replaced the edit-distance demo with a word-level fuzzy matcher, reworked the pipeline to the real 19-agent topology, and expanded forecast into the five-tab DE_LU Power Intelligence."
+  },
+  {
+    "date": "2026-06-12",
+    "entry": "Rebuilt the site as a live lab: tokenizer, order book, forecast, pipeline, attention and Levenshtein demos."
+  }
+]

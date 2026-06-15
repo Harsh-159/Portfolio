@@ -1,0 +1,32 @@
+[
+  {
+    "id": "tokenizer",
+    "title": "Byte-pair encoding tokenizer",
+    "status": "live",
+    "date": "2026-06",
+    "note": "Trained on TinyStories V2-GPT4",
+    "demo": "/lab/tokenizer"
+  },
+  {
+    "id": "dataloader",
+    "title": "Dataset and dataloader",
+    "status": "in-progress",
+    "date": "2026-06"
+  },
+  {
+    "id": "attention",
+    "title": "Attention and transformer blocks",
+    "status": "planned",
+    "demo": "/lab/attention"
+  },
+  {
+    "id": "training",
+    "title": "Training run on TinyStories",
+    "status": "planned"
+  },
+  {
+    "id": "generation",
+    "title": "In-browser generation (WebGPU)",
+    "status": "planned"
+  }
+]
