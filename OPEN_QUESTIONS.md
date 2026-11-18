@@ -2,10 +2,10 @@
 
 Facts and files the site needs from Harsh. Nothing here is on the site until it is answered.
 
-## Blocking before this goes live
+## CV and photo
 
-1. **New CV.** `public/cv.pdf` is still the old CV. It contains a phone number, "Currently finishing an MSc" and a right-to-work statement, all of which the spec bans (section 3.10). Replace it with the current CV, without a phone number, at the same path.
-2. **New photo.** `public/harsh.webp` is the old photo. Replace it at the same path. Ratio 4:5 (it is shown 240 px wide on desktop).
+1. **CV.** `public/cv.pdf` is `graduateJob_draft6 (13).pdf` with the phone number removed, as Harsh asked. It still contains the line about the UK Graduate Route visa and right to work, which section 3.10 says the site should not carry. Replace the file at the same path if you want that line gone.
+2. **Photo.** `public/harsh.webp` is the new photo, cropped to 4:5 around Harsh and resized to 480 by 600.
 
 ## Items marked "(confirm)" in the spec
 
