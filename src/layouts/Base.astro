@@ -1,0 +1,88 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { site } from '../content/site';
+import serifUrl from '@fontsource-variable/source-serif-4/files/source-serif-4-latin-opsz-normal.woff2?url';
+import sansUrl from '@fontsource-variable/atkinson-hyperlegible-next/files/atkinson-hyperlegible-next-latin-wght-normal.woff2?url';
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  home?: boolean;
+  noindex?: boolean;
+}
+
+const { title, description, path, home = false, noindex = false } = Astro.props;
+const canonical = `${site.origin}${path === '/' ? '/' : path}`;
+const ogImage = `${site.origin}/og.png`;
+const fullTitle = home ? `${site.name}, ${site.role}` : `${title} | ${site.name}`;
+const jsonLd = home
+  ? JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Person',
+      name: site.name,
+      jobTitle: 'AI engineer',
+      url: site.origin,
+      email: `mailto:${site.email}`,
+      sameAs: [site.linkedin, site.github],
+      alumniOf: [
+        { '@type': 'CollegeOrUniversity', name: 'University of Birmingham' },
+        { '@type': 'CollegeOrUniversity', name: 'IIT Guwahati' },
+      ],
+    })
+  : null;
+---
+
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta name="theme-color" content="#F5F7F2" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0E1713" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta property="og:type" content={home ? 'profile' : 'article'} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Harsh Yadav, AI engineer. I make LLM agents dependable in production." />
+    <meta property="og:locale" content="en_GB" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <link rel="preload" href={serifUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={sansUrl} as="font" type="font/woff2" crossorigin />
+    {jsonLd && <script type="application/ld+json" set:html={jsonLd} />}
+    <script is:inline>
+      (function () {
+        try {
+          var t = localStorage.getItem('theme');
+          if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body data-page={home ? 'home' : 'lab'}>
+    <a class="skip-link" href="#content">Skip to content</a>
+    <Header home={home} />
+    <main id="content" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+    <script>
+      import '../scripts/site';
+    </script>
+  </body>
+</html>

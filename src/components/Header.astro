@@ -1,0 +1,213 @@
+---
+import { homeNav, site } from '../content/site';
+import Icon from './Icon.astro';
+
+interface Props {
+  home: boolean;
+}
+const { home } = Astro.props;
+const href = (id: string) => (home ? `#${id}` : `/#${id}`);
+---
+
+<header class="site-header" data-header>
+  <div class="wrap header-inner">
+    <a class="brand" href="/">{site.name}</a>
+    <nav class="nav" aria-label="Main">
+      <ul>
+        {
+          homeNav.map((n) => (
+            <li>
+              <a href={href(n.id)} data-nav={n.id}>
+                {n.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <a class="btn btn-small cv-btn" href={site.cv} download data-track="cv">CV</a>
+      <button class="btn btn-small icon-btn" type="button" data-theme-toggle aria-label="Switch theme">
+        <Icon name="theme" />
+      </button>
+      <button class="btn btn-small search-btn" type="button" data-palette-open aria-haspopup="dialog">
+        <span>Search</span>
+        <kbd class="kbd" data-shortcut>Ctrl K</kbd>
+      </button>
+      <button class="btn btn-small menu-btn" type="button" data-menu-open aria-expanded="false" aria-controls="menu-sheet">
+        Menu
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="menu-sheet" id="menu-sheet" role="dialog" aria-modal="true" aria-label="Menu" hidden>
+  <div class="menu-sheet-inner">
+    <div class="menu-sheet-top">
+      <span class="brand">{site.name}</span>
+      <button class="btn btn-small" type="button" data-menu-close>Close</button>
+    </div>
+    <ul>
+      {
+        homeNav.map((n) => (
+          <li>
+            <a href={href(n.id)} data-menu-link>
+              {n.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <div class="btn-row">
+      <a class="btn btn-primary" href={site.cv} download data-track="cv">Download CV (PDF)</a>
+      <button class="btn" type="button" data-theme-toggle>Switch theme</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    height: 64px;
+    background: color-mix(in srgb, var(--paper) 92%, transparent);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid transparent;
+    transition: border-color 200ms var(--ease);
+  }
+  .site-header.scrolled {
+    border-bottom-color: var(--rule);
+  }
+  .header-inner {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .brand {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 1.1875rem;
+    color: var(--ink);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .nav {
+    display: none;
+    margin: 0 auto;
+  }
+  .nav ul {
+    display: flex;
+    gap: 4px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .nav li {
+    margin: 0;
+  }
+  .nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 10px;
+    color: var(--ink);
+    text-decoration: none;
+    border-radius: var(--r-control);
+  }
+  .nav a:hover {
+    text-decoration: underline;
+  }
+  .nav a[aria-current='true'] {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    font-weight: 650;
+  }
+  .header-actions {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+    align-items: center;
+  }
+  .icon-btn {
+    width: 44px;
+    padding: 0;
+  }
+  .header-actions :global(.btn-small) {
+    min-height: 44px;
+  }
+  .kbd {
+    display: none;
+    font-family: var(--sans);
+    font-size: 0.875rem;
+    color: var(--ink-soft);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 0 6px;
+  }
+  .cv-btn,
+  .search-btn {
+    display: none;
+  }
+  @media (min-width: 480px) {
+    .search-btn {
+      display: inline-flex;
+    }
+  }
+  @media (min-width: 768px) {
+    .nav {
+      display: block;
+    }
+    .menu-btn {
+      display: none;
+    }
+    .cv-btn {
+      display: inline-flex;
+    }
+    .header-actions {
+      margin-left: 0;
+    }
+  }
+  @media (min-width: 1024px) {
+    .kbd {
+      display: inline-block;
+    }
+  }
+  .menu-sheet {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    background: var(--paper);
+    overflow-y: auto;
+  }
+  .menu-sheet-inner {
+    padding: 12px 24px 32px;
+  }
+  .menu-sheet-top {
+    height: 52px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .menu-sheet ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 24px;
+  }
+  .menu-sheet li {
+    border-bottom: 1px solid var(--rule);
+    margin: 0;
+  }
+  .menu-sheet li a {
+    display: flex;
+    align-items: center;
+    min-height: 56px;
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    color: var(--ink);
+    text-decoration: none;
+  }
+</style>

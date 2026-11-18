@@ -1,0 +1,149 @@
+---
+import Lab from '../../layouts/Lab.astro';
+import Term from '../../components/Term.astro';
+import PromptTesting from '../../islands/PromptTesting';
+import { ORACLE_INTERNAL } from '../../content/site';
+import { conclusions } from '../../content/profile';
+
+const sections = [
+  { id: 'plain-words', label: 'In plain words' },
+  { id: 'bench', label: 'Figure 1: the test bench' },
+  { id: 'loop', label: 'Figure 2: the loop' },
+  { id: 'features', label: 'Everything the original did' },
+  { id: 'comparison', label: 'Four ways to build' },
+  { id: 'how', label: 'How it works' },
+  { id: 'limits', label: 'Limits and next steps' },
+  { id: 'real', label: 'What is real here' },
+];
+
+const features: [string, string][] = [
+  ['API type: Completions or Prompt Lab', 'Shown, disabled'],
+  ['Endpoint and access token fields', 'Shown, disabled and empty'],
+  [
+    'Model settings: temperature, max tokens, top-p, top-k, frequency penalty, presence penalty, model name, language, persist data',
+    'Shown, disabled',
+  ],
+  ['Prompt input with named variables', 'Shown, read-only'],
+  ['CSV upload: one column per variable, expected answer in the last column', 'Three built-in test sets, viewable as CSV'],
+  ['Post-processing: a JavaScript expression applied to each answer', 'Four presets'],
+  ['Matching: exact, or semantic by embedding similarity', 'Exact works as in the original. Semantic uses word-overlap similarity as a stand-in'],
+  ['Output format: string, array or JSON', 'Works'],
+  ['Iteration count', 'Works, 1 to 3'],
+  ['Run tests, and download results as HTML tables', 'Works'],
+  ['Accuracy gauge', 'Works'],
+  ['Latency graph with average', 'Works, on fixed timings'],
+  ['Experimental features switch', 'Works'],
+  ['AI analysis of failures', 'A rule-based checker stands in for the model'],
+  ['AI-suggested prompt', 'A fixed suggestion per test set'],
+  ['Guardrails: yes-or-no checks and value checks such as character_count >= 500', 'Three guardrails'],
+  ['Dark mode', "The site's own theme toggle"],
+];
+---
+
+<Lab
+  slug="prompt-testing"
+  title="Prompt testing tool"
+  context="Oracle, 2023 to 2025"
+  summary="A test bench for prompts: load cases, run them, score the answers and see why they fail."
+  sections={sections}
+  facts={[
+    { label: 'Role', value: 'Designed and built it' },
+    { label: 'Tools', value: "A Chrome extension in JavaScript, calling Oracle's internal LLM APIs" },
+    { label: 'Links', value: `None. ${ORACLE_INTERNAL}` },
+  ]}
+>
+  <section id="plain-words" aria-labelledby="plain-words-h">
+    <h2 id="plain-words-h">In plain words</h2>
+    <p>
+      A <Term id="prompt">prompt</Term> that works on three examples can fail on the fourth. With 19 prompts in one pipeline,
+      checking them by hand stopped working. I built a Chrome extension that runs a prompt against a file of test cases,
+      scores every answer, charts accuracy and speed, and uses AI to explain failures and suggest a better prompt.
+    </p>
+  </section>
+
+  <section class="figure-section">
+    <PromptTesting client:visible />
+  </section>
+
+  <section id="features" aria-labelledby="features-h">
+    <h2 id="features-h">Everything the original did</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Feature of the original</th>
+            <th scope="col">In this rebuild</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            features.map(([a, b]) => (
+              <tr>
+                <td>{a}</td>
+                <td>{b}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+    <p class="small soft">
+      A <Term id="guardrail">guardrail</Term> blocks an answer that breaks a stated rule, whatever the comparison says.
+    </p>
+  </section>
+
+  <section id="comparison" aria-labelledby="comparison-h">
+    <h2 id="comparison-h">Four ways to build an AI feature, and what I concluded</h2>
+    <p>At Oracle I tried all four on real features.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Approach</th>
+            <th scope="col">Conclusion</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            conclusions.map((c) => (
+              <tr>
+                <th scope="row">{c.approach}</th>
+                <td>{c.conclusion}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="how" aria-labelledby="how-h">
+    <h2 id="how-h">How it works</h2>
+    <ol class="steps">
+      <li>Write the prompt with named variables.</li>
+      <li>Load a CSV with one column per variable and the expected answer in the last column.</li>
+      <li>Choose how answers are compared.</li>
+      <li>Run. Each case goes to the model, as many times as the iteration count.</li>
+      <li>Each answer is post-processed, checked against the guardrails and compared with the expected answer.</li>
+      <li>Read accuracy and latency, then open the failures.</li>
+      <li>Ask for an analysis and a suggested prompt, then run again.</li>
+    </ol>
+  </section>
+
+  <section id="limits" aria-labelledby="limits-h">
+    <h2 id="limits-h">Limits and what I would do next</h2>
+    <ul>
+      <li>The answers and timings on this page are fixed. Changing the prompt would change nothing, so the prompt is read-only.</li>
+      <li>Word-overlap similarity is cruder than the embedding similarity the original used.</li>
+      <li>I have no usage numbers to share.</li>
+    </ul>
+  </section>
+
+  <section id="real" aria-labelledby="real-h">
+    <h2 id="real-h">What is real here</h2>
+    <p class="real-box">
+      The workflow, the options and the scoring rules are those of the tool I built. The prompts, test cases, answers and
+      timings were written for this page. The original ran as a Chrome extension and called Oracle's LLM APIs.
+    </p>
+  </section>
+</Lab>

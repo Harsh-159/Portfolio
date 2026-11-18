@@ -1,0 +1,47 @@
+---
+import { site } from '../content/site';
+const built = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date());
+---
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <span class="footer-name">{site.name}</span>
+    <span class="footer-email">
+      <a href={`mailto:${site.email}`}>{site.email}</a>
+      <button class="linklike copy-inline" type="button" data-copy={site.email} data-track="email-copy">Copy</button>
+    </span>
+    <a href={site.linkedin} rel="noopener">LinkedIn</a>
+    <a href={site.github} rel="noopener">GitHub</a>
+    <a href={site.cv} download data-track="cv">CV</a>
+    <span class="soft">Last updated {built}</span>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--rule);
+    padding: 28px 0 40px;
+    font-size: 0.9375rem;
+  }
+  .footer-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 24px;
+  }
+  .footer-name {
+    font-family: var(--serif);
+    font-weight: 600;
+  }
+  .footer-email {
+    display: inline-flex;
+    gap: 10px;
+    align-items: center;
+    overflow-wrap: anywhere;
+  }
+  .site-footer a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+</style>

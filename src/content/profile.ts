@@ -1,130 +1,231 @@
-// Single source of truth for site copy and structured CV data (spec Section 9).
-// Numbers here are real. Do not invent metrics, employers, or quotes.
+// Sections 3.2 to 3.9 and 7.5 to 7.9: education, experience, awards, skills and more work.
 
-export const LINKS = {
-  email: 'harshyadavhappy@gmail.com',
-  linkedin: 'https://www.linkedin.com/in/harsh-yadav-01/',
-  github: 'https://github.com/Harsh-159',
-  linktree: 'https://linktr.ee/harshyadav01',
-  cv: '/cv.pdf',
-  // Repository that hosts this site; "View source" links on demos point here.
-  repo: 'https://github.com/Harsh-159/Portfolio',
+export const experience = {
+  role: 'Applications Developer, Oracle',
+  dates: 'June 2023 to August 2025',
+  team: 'Transaction Framework team, Human Capital Management',
+  progress: ['Full-stack features', 'Back end', 'AI work'],
+  tools: 'JavaScript, Java, SQL, Oracle Prompt Lab, Cohere, AI Agent Studio',
+  entries: [
+    {
+      title: 'Proposed and shipped an LLM approval-rule generator',
+      text: 'Tasked with finding a high-value AI use case, proposed generating entire approval trees with LLMs, got it approved and took it to production as a pipeline of 19 specialised prompts, with structured JSON passed between every step.',
+      href: '/lab/pipeline',
+      linkText: 'Run the pipeline demo',
+    },
+    {
+      title: 'Made it fast by running it in parallel',
+      text: 'The first version made its AI calls one after another at about 5 seconds each, so a request with eight calls took about 40 seconds. I split the work into parallel branches, which brought it to a steady 20 seconds or so in production.',
+      href: '/lab/pipeline#latency',
+      linkText: 'Open the latency lab',
+    },
+    {
+      title: 'Built a prompt testing tool',
+      text: 'An internal Chrome extension for testing prompts against CSV test sets, with exact and semantic matching, accuracy and latency charts, AI analysis of failures, AI-suggested prompts and guardrails.',
+      href: '/lab/prompt-testing',
+      linkText: 'Run the test bench',
+    },
+    {
+      title: 'Compared four ways of building AI features',
+      text: 'Fine-tuning with Cohere, prompt engineering with Prompt Lab, reinforcement learning with guardrails and agentic workflows with AI Agent Studio. I then used whichever fitted the feature.',
+      href: null,
+      linkText: null,
+    },
+    {
+      title: 'Wrote a fuzzy matcher for approval-rule search',
+      text: 'A word-level string matcher built on Levenshtein distance that tolerates typos, swapped words and missing words.',
+      href: '/lab/matcher',
+      linkText: 'Try the matcher',
+    },
+  ],
 } as const;
 
-export const IDENTITY = {
-  name: 'Harsh Yadav',
-  role: 'AI engineer',
-  location: 'Birmingham, UK',
-  tagline: 'I build and evaluate LLM systems.',
-};
-
-export const STATS = [
-  { value: '86.7%', label: 'directional accuracy over 12,000 out-of-sample hours' },
-  { value: '19-agent', label: 'production pipeline at Oracle' },
-  { value: '1st place', label: 'UKFinnovator 2026' },
-  { value: 'Top 4%', label: 'on LeetCode' },
-];
-
-export interface ExperienceEntry {
-  role: string;
-  org: string;
-  date: string;
-  context: string;
-  bullets: { text: string; href?: string }[];
-}
-
-export const EXPERIENCE: ExperienceEntry[] = [
+/** Section 3.3: the four conclusions. */
+export const conclusions = [
+  { approach: 'Prompt engineering', conclusion: 'General purpose, and enough for more than 90% of cases' },
+  { approach: 'Fine-tuning', conclusion: 'Takes too long, and does not suit needs that keep changing' },
+  { approach: 'Agentic workflows', conclusion: 'Can do a lot, but every chain has to be tested' },
   {
-    role: 'Applications Developer',
-    org: 'Oracle',
-    date: '2023 to 2025',
-    context: 'Transaction Framework team, internal tooling for Oracle’s HCM organisation.',
-    bullets: [
-      {
-        text: 'Built a multi-step agentic pipeline (19 agents) for AI-powered approval rule generation.',
-        href: '/lab/pipeline',
-      },
-      {
-        text: 'Ran a comparative analysis of approaches: Cohere fine-tuning, prompt engineering, RL, and agentic workflows.',
-      },
-      { text: 'Built a Chrome extension for prompt testing.' },
-      {
-        text: 'Built a string matching algorithm for approval-rule search.',
-        href: '/lab/matcher',
-      },
+    approach: 'Reinforcement learning on prompts',
+    conclusion: 'Takes too long, but can give great results if there is a good way to cross over and mutate prompts',
+  },
+] as const;
+
+export const education = {
+  msc: {
+    line1: 'MSc Artificial Intelligence and Machine Learning, University of Birmingham, 2025 to 2026',
+    grade: '85.1%, Distinction',
+    top: 'Top of cohort',
+    scholarship: "India Postgraduate Chancellor's Scholarship, one of around 20 awarded each year.",
+    marks: [
+      { module: 'Mathematical Foundations for AI', mark: 95 },
+      { module: 'Evolutionary Computation', mark: 97 },
+      { module: 'Natural Language Processing', mark: 93 },
     ],
+    modules: [
+      'Current Topics in AI and ML',
+      'Machine Learning',
+      'Mathematical Foundations of AI and ML',
+      'Intelligent Robotics',
+      'Evolutionary Computation',
+      'Natural Language Processing',
+    ],
+    dissertation: 'Decision-Focused Regime-Gated Reservoir Computing',
+    supervisor: 'Professor Peter Tino',
   },
-];
-
-export interface EducationEntry {
-  degree: string;
-  org: string;
-  date: string;
-  detail: string;
-  coursework?: string[];
-}
-
-export const EDUCATION: EducationEntry[] = [
-  {
-    degree: 'MSc Artificial Intelligence & Machine Learning',
-    org: 'University of Birmingham',
-    date: '2025 to 2026',
-    detail:
-      'Expected Distinction. India Postgraduate Chancellor’s Scholarship, one of around 20 awarded annually.',
-  },
-  {
-    degree: 'B.Tech Electronics & Electrical Engineering',
-    org: 'IIT Guwahati',
-    date: '2019 to 2023',
-    detail: 'GPA 7.93.',
+  btech: {
+    line1: 'B.Tech Electronics and Electrical Engineering, IIT Guwahati, 2019 to 2023',
+    grade: '7.93/10',
     coursework: [
       'Deep Learning (CS 590)',
       'Optimization Techniques (EE 658)',
       'Data Structures and Algorithms (EE 390)',
-      'Information Theory & Coding (EE 335)',
+      'Information Theory and Coding (EE 335)',
       'Introduction to Computing (CS 101)',
       'Computing Lab (CS 110)',
     ],
   },
+  other: ['Harvard CS50 Introduction to Computer Science', 'Stanford Machine Learning Specialization'],
+} as const;
+
+/** Section 3.8, in this order. */
+export const awards = [
+  { name: 'UKFinnovator 2026', wording: 'First place, with GFA EquiShift', evidence: 'ukfinnovator' as const },
+  {
+    name: "Chancellor's Scholarship",
+    wording: "India Postgraduate Chancellor's Scholarship, University of Birmingham, 2025",
+  },
+  { name: 'LeetCode', wording: 'Top 4% in contests, 900+ problems solved in Python' },
+  { name: 'HackerEarth', wording: '13th of 1,313 in a machine learning challenge' },
+  {
+    name: 'JEE',
+    wording: 'JEE Advanced All India Rank 5,141 of 150,000+. JEE Main 99.54 percentile of 1.2 million+ (2019)',
+  },
+  { name: 'Masters Consultancy Challenge', wording: 'Runner-up, with Turner & Townsend, 2026' },
 ];
 
-export interface ProjectCard {
-  title: string;
-  blurb: string;
-  href: string;
-  badge?: string;
+export interface UsedIn {
+  label: string;
+  href?: string;
 }
 
-// "Other projects": work that is linked rather than embedded as a live demo.
-export const OTHER_PROJECTS: ProjectCard[] = [
+const L = {
+  pipeline: { label: 'Approval-rule pipeline', href: '/lab/pipeline' },
+  orchestrator: { label: 'Orchestrator', href: '/lab/orchestrator' },
+  defi: { label: 'DeFi trading system', href: '/#more-work-defi' },
+  forecast: { label: 'DE_LU Power Intelligence', href: '/lab/forecast' },
+  briefing: { label: 'DE_LU Power Intelligence briefing', href: '/lab/forecast#briefing' },
+  promptTool: { label: 'Prompt testing tool', href: '/lab/prompt-testing' },
+  scenarios: { label: 'Orchestrator scenario tests', href: '/lab/orchestrator#runs' },
+  loopLimits: { label: 'Orchestrator loop limits', href: '/lab/orchestrator#guards' },
+  dissertation: { label: 'Dissertation', href: '/lab/dissertation' },
+  maxsat: { label: 'MaxSAT solver', href: '/lab/maxsat' },
+  robots: { label: 'Robot auctions', href: '/#more-work-robots' },
+  oracle: { label: 'Oracle', href: '/#experience' },
+  comparison: { label: 'Oracle approach comparison', href: '/lab/prompt-testing#comparison' },
+} satisfies Record<string, UsedIn>;
+
+/** Section 7.8. Each skill lists where it was used. */
+export const skillGroups: { group: string; skills: { name: string; usedIn: UsedIn[] }[] }[] = [
   {
+    group: 'Agents and evaluation',
+    skills: [
+      { name: 'Agent orchestration', usedIn: [L.pipeline, L.orchestrator, L.defi] },
+      { name: 'Tool calling', usedIn: [L.orchestrator] },
+      { name: 'Structured outputs', usedIn: [L.pipeline, L.orchestrator] },
+      { name: 'RAG', usedIn: [L.briefing] },
+      { name: 'LLM evaluation', usedIn: [L.promptTool, L.scenarios] },
+      { name: 'Guardrails', usedIn: [L.promptTool, L.loopLimits] },
+    ],
+  },
+  {
+    group: 'Engineering',
+    skills: [
+      { name: 'Python', usedIn: [L.orchestrator, L.forecast, L.dissertation, L.maxsat, L.robots] },
+      { name: 'FastAPI', usedIn: [L.orchestrator] },
+      { name: 'REST APIs', usedIn: [L.orchestrator] },
+      { name: 'Automated testing', usedIn: [L.orchestrator] },
+      { name: 'Telemetry', usedIn: [L.orchestrator] },
+      { name: 'Java', usedIn: [L.oracle] },
+      { name: 'JavaScript', usedIn: [L.oracle] },
+      { name: 'SQL', usedIn: [L.oracle] },
+      { name: 'Git', usedIn: [{ label: 'All projects' }] },
+      { name: 'Linux', usedIn: [{ label: 'All projects' }] },
+      { name: 'Claude Code', usedIn: [{ label: 'Day-to-day tool on recent projects' }] },
+    ],
+  },
+  {
+    group: 'Machine learning',
+    skills: [
+      { name: 'PyTorch', usedIn: [L.dissertation] },
+      { name: 'scikit-learn', usedIn: [L.forecast] },
+      { name: 'LightGBM', usedIn: [L.forecast] },
+      { name: 'pandas', usedIn: [L.forecast] },
+      { name: 'NumPy', usedIn: [L.forecast] },
+      { name: 'Fine-tuning', usedIn: [L.comparison] },
+      { name: 'Evolutionary computation', usedIn: [L.maxsat] },
+    ],
+  },
+];
+
+/** Section 7.5. */
+export const moreWork = [
+  {
+    id: 'more-work-equishift',
     title: 'GFA EquiShift',
-    blurb:
-      'AI-driven portfolio intelligence with a tokenised secondary marketplace, built in a hackathon sprint.',
-    href: 'https://github.com/Harsh-159/GFA-EquiShift',
-    badge: '1st place, UKFinnovator 2026',
+    summary: 'First place, UKFinnovator 2026. A platform that helps lenders rebalance small-business loan portfolios.',
+    role: 'I was the key technical person in a team of five. I proposed the central idea and helped build it.',
+    bullets: [
+      'AI analysis of concentration risk with keep or reallocate advice for each loan.',
+      'AI-written investment memos for listings.',
+      'A tokenised secondary marketplace with bid and ask pricing.',
+    ],
+    tools: null,
+    body: null,
+    links: [{ label: 'Repository', href: 'https://github.com/Harsh-159/GFA-EquiShift' }],
   },
   {
-    title: 'Automated AI-powered DeFi trading system',
-    blurb:
-      'A decentralised trading system where specialised AI agents analyse market signals (whale activity, regulations, on-chain data and sentiment) and a central decision agent issues Buy, Sell or Hold calls. It runs a thrice-daily trading workflow on the top boosted tokens, a 15-minute crash detector, and a weekly reporter that emails a generated PDF. Built with OpenAI agents, the DEX Screener and Etherscan APIs, Perplexity Sonar Pro, and MetaMask for execution.',
-    href: 'https://github.com/Harsh-159/Automated-AI-Powered-DeFi-Trading-System',
-    badge: 'OpenServ Hackathon',
+    id: 'more-work-defi',
+    title: 'Automated DeFi trading system',
+    summary: 'OpenServ hackathon, 2025. AI agents that decide what to buy, sell or hold.',
+    role: 'I was the key technical person in a team of two. I proposed the central idea and helped build it.',
+    bullets: [
+      'A trading workflow three times a day that reads the top 15 boosted tokens and picks three to buy.',
+      'A crash detector every 15 minutes that triggers the workflow on a sharp drop.',
+      'A weekly report emailed as a PDF.',
+    ],
+    tools: 'OpenAI agents, DEX Screener, Perplexity Sonar Pro, MetaMask, Etherscan',
+    body: null,
+    links: [{ label: 'Repository', href: 'https://github.com/Harsh-159/Automated-AI-Powered-DeFi-Trading-System' }],
   },
   {
-    title: 'More on GitHub',
-    blurb: 'A Flask trip-planning network, a COVID-19 choropleth, a stock simulator, and more.',
-    href: 'https://github.com/Harsh-159',
+    id: 'more-work-robots',
+    title: 'Energy-aware robot auctions',
+    summary: 'University of Birmingham group project. Robots bid for warehouse tasks.',
+    role: null,
+    bullets: null,
+    tools: null,
+    body: 'Sequential single-item and combinatorial auctions decide which robot takes which task. Bids include a battery-risk term, so robots go to charge before they run flat. Speed and battery drain are learned during the run. Built in Python on the Webots simulator.',
+    links: [{ label: 'Repository', href: 'https://github.com/Harsh-159/robotics-assignment' }],
+  },
+  {
+    id: 'more-work-job-scan',
+    title: 'Job-scan agent',
+    summary: '2026. A scheduled agent that finds roles worth applying to.',
+    role: null,
+    bullets: null,
+    tools: null,
+    body: "Each day it scans new postings, checks each one against the employer's own careers page, filters against my criteria and logs the result so nothing is shown twice.",
+    links: [],
+  },
+  {
+    id: 'more-work-earlier',
+    title: 'Earlier work',
+    summary: '2022 and before.',
+    role: null,
+    bullets: null,
+    tools: null,
+    body: 'A Flask social network for planning trips. A world COVID-19 map built from scraped statistics.',
+    links: [{ label: 'More on GitHub', href: 'https://github.com/Harsh-159' }],
   },
 ];
-
-// About copy (Section 6.6). First person, British English, no self-adjectives.
-export const ABOUT_PARAGRAPHS = [
-  'In seminars I’m easy to find: the bald guy asking too many questions.',
-  'I’m an AI engineer focused on LLM systems and evaluation. I did my B.Tech at IIT Guwahati, spent two years at Oracle building internal AI tooling, and I’m now doing an MSc in AI and Machine Learning at Birmingham as a Chancellor’s Scholar.',
-  'I founded and chair the All Things AI society at Birmingham, and I took part in the Masters Consultancy Challenge with Turner & Townsend.',
-  'Away from the screen I’ve won national-level medals in swimming and taekwondo, which is mostly how I learned that progress comes from showing up to the boring repetitions.',
-  'I’m based in Birmingham and open to relocation. If you want to see how I think, run one of the demos above and read the source.',
-];
-
-export const ABOUT_PHOTO = '/harsh.webp';

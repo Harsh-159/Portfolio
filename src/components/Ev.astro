@@ -1,0 +1,12 @@
+---
+// The highlighter (section 6.3). Only facts with an entry in evidence.ts may use it.
+import { evidence, type EvidenceId } from '../content/evidence';
+interface Props {
+  id: EvidenceId;
+}
+const { id } = Astro.props;
+const entry = evidence[id];
+if (!entry) throw new Error(`Unknown evidence id: ${id}`);
+---
+
+<a class="ev" href={entry.href} data-ev={id} aria-haspopup="dialog" aria-expanded="false"><slot /></a>

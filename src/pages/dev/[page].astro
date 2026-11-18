@@ -1,0 +1,39 @@
+---
+// Section 6: a component catalogue for development. Not built for production.
+import Base from '../../layouts/Base.astro';
+import Ev from '../../components/Ev.astro';
+import Term from '../../components/Term.astro';
+import Badge from '../../components/Badge.astro';
+import { badges, type BadgeKind } from '../../content/labs';
+
+export function getStaticPaths() {
+  return import.meta.env.DEV ? [{ params: { page: 'components' } }] : [];
+}
+---
+
+<Base title="Components" description="Component catalogue" path="/dev/components" noindex>
+  <div class="wrap" style="padding: 48px 0 96px; max-width: 900px;">
+    <h1>Components</h1>
+    <h2>Header and footer</h2>
+    <p>Sticky header with a scroll rule, centre links from 768 px, a menu sheet below that, CV, theme and Search. The footer is one row.</p>
+    <h2>Evidence popover</h2>
+    <p>A highlighted fact: <Ev id="mae">13.60 EUR/MWh</Ev>. Click, Enter or Space opens the note.</p>
+    <h2>Glossary term</h2>
+    <p>A term on first use: <Term id="mae">MAE</Term>.</p>
+    <h2>Provenance badges</h2>
+    <ul>{(Object.keys(badges) as BadgeKind[]).map((k) => <li><Badge kind={k} /> {badges[k].explanation}</li>)}</ul>
+    <h2>Controls</h2>
+    <div class="btn-row">
+      <button class="btn btn-primary" type="button">Primary button</button>
+      <button class="btn" type="button">Secondary button</button>
+      <a href="#">A link</a>
+      <button class="chip" type="button" aria-pressed="true">Toggle chip</button>
+      <button class="chip" type="button" aria-pressed="false">Toggle chip</button>
+      <button class="btn" type="button" data-copy="copied text">Copy button</button>
+    </div>
+    <h2>Accordion</h2>
+    <details class="acc" id="dev-acc"><summary>Summary line</summary><div class="acc-body"><p>Opens when its id is the page fragment.</p></div></details>
+    <h2>Figure frame</h2>
+    <p>See any lab page. Each figure has a number, a title, one badge, controls, a stage, an "In words" line, a caption, Reset and Copy link.</p>
+  </div>
+</Base>

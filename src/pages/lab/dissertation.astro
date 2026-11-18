@@ -1,0 +1,83 @@
+---
+import Lab from '../../layouts/Lab.astro';
+import Term from '../../components/Term.astro';
+import { Architecture, Reservoir, Gate, Training, Discipline } from '../../islands/Dissertation';
+
+const sections = [
+  { id: 'plain-words', label: 'In plain words' },
+  { id: 'architecture', label: 'Figure 1: four parts' },
+  { id: 'reservoir', label: 'Figure 2: a reservoir' },
+  { id: 'gate', label: 'Figure 3: the gate' },
+  { id: 'training', label: 'Figure 4: training' },
+  { id: 'discipline', label: 'Figure 5: discipline' },
+  { id: 'how', label: 'How it works' },
+  { id: 'limits', label: 'Limits and next steps' },
+  { id: 'real', label: 'What is real here' },
+];
+---
+
+<Lab
+  slug="dissertation"
+  title="Decision-Focused Regime-Gated Reservoir Computing"
+  context="MSc dissertation, University of Birmingham, 2026"
+  summary="A portfolio model trained on the decision it makes, not on a forecast. This page explains the design and shows no results."
+  sections={sections}
+  facts={[
+    { label: 'Role', value: 'Sole author' },
+    { label: 'Supervisor', value: 'Professor Peter Tino' },
+    { label: 'When', value: '2026, about three months' },
+    { label: 'Tools', value: 'Python, PyTorch' },
+    { label: 'Links', value: 'None' },
+  ]}
+>
+  <section id="plain-words" aria-labelledby="plain-words-h">
+    <h2 id="plain-words-h">In plain words</h2>
+    <p>
+      Most portfolio models first predict returns and then turn the predictions into holdings. A good prediction does not
+      guarantee a good portfolio. This dissertation trains the whole system on the quality of the portfolio itself,
+      measured by the <Term id="sharpe">Sharpe ratio</Term>. A fixed reservoir summarises recent market history, a gate
+      judges which market regime applies, and specialist policies propose holdings that the gate blends.
+    </p>
+    <p class="small soft">
+      The design combines <Term id="reservoir-computing">reservoir computing</Term> with a
+      <Term id="mixture-of-experts">mixture of experts</Term>, trained end to end in PyTorch on realised Sharpe ratio.
+    </p>
+  </section>
+
+  <section class="figure-section"><Architecture client:visible /></section>
+  <section class="figure-section"><Reservoir client:visible /></section>
+  <section class="figure-section"><Gate client:visible /></section>
+  <section class="figure-section"><Training client:visible /></section>
+  <section class="figure-section"><Discipline client:visible /></section>
+
+  <section id="how" aria-labelledby="how-h">
+    <h2 id="how-h">How it works</h2>
+    <ol class="steps">
+      <li>The frozen reservoir turns recent market history into a summary.</li>
+      <li>The gate reads the summary and sets a weight for each expert.</li>
+      <li>Each expert proposes portfolio weights, and the gate's weights blend them.</li>
+      <li>The ledger books the returns of the blended portfolio and scores them with the Sharpe ratio.</li>
+      <li>That score is the training signal for the gate and the experts.</li>
+    </ol>
+    <p>
+      The experiments cover 13 variants across 2 universes and 5 seeds. The holdout is firewalled in code, and every run is
+      logged to a config-hashed registry.
+    </p>
+  </section>
+
+  <section id="limits" aria-labelledby="limits-h">
+    <h2 id="limits-h">Limits and what I would do next</h2>
+    <ul>
+      <li>Detailed results are not published here.</li>
+      <li>Every figure on this page is an illustration with made-up inputs.</li>
+    </ul>
+  </section>
+
+  <section id="real" aria-labelledby="real-h">
+    <h2 id="real-h">What is real here</h2>
+    <p class="real-box">
+      The architecture, the training objective and the experimental set-up are those of the dissertation. The figures are
+      illustrations. No dissertation data or result appears on this page.
+    </p>
+  </section>
+</Lab>

@@ -1,0 +1,16 @@
+---
+import { badges, type BadgeKind } from '../content/labs';
+import Icon from './Icon.astro';
+interface Props {
+  kind: BadgeKind;
+  explain?: boolean;
+}
+const { kind, explain = false } = Astro.props;
+const b = badges[kind];
+---
+
+<span class="badge" title={b.explanation}>
+  <Icon name={kind} size={16} />
+  {b.label}
+  {explain && <span class="visually-hidden">: {b.explanation}</span>}
+</span>

@@ -1,0 +1,113 @@
+---
+import Lab from '../../layouts/Lab.astro';
+import Term from '../../components/Term.astro';
+import Headline from '../../islands/forecast/Headline';
+import Explorer from '../../islands/forecast/Explorer';
+import Stages from '../../islands/forecast/Stages';
+import Validation from '../../islands/forecast/Validation';
+import Signals from '../../islands/forecast/Signals';
+import Briefing from '../../islands/forecast/Briefing';
+import DataChecks from '../../islands/forecast/DataChecks';
+
+const sections = [
+  { id: 'plain-words', label: 'In plain words' },
+  { id: 'headline', label: 'Figure 1: headline numbers' },
+  { id: 'explorer', label: 'Figure 2: forecast explorer' },
+  { id: 'stages', label: 'Figure 3: stages' },
+  { id: 'validation', label: 'Figure 4: testing' },
+  { id: 'signals', label: 'Figure 5: signals' },
+  { id: 'briefing', label: 'Figure 6: briefing audit' },
+  { id: 'data-checks', label: 'Figure 7: data checks' },
+  { id: 'how', label: 'How it works' },
+  { id: 'trade-offs', label: 'Decisions and trade-offs' },
+  { id: 'limits', label: 'Limits and next steps' },
+  { id: 'real', label: 'What is real here' },
+];
+---
+
+<Lab
+  slug="forecast"
+  title="DE_LU Power Intelligence"
+  context="Energy-trading case study, 2026"
+  summary="Forecasts tomorrow's German electricity prices, turns them into signals and writes a briefing whose every number is checked."
+  sections={sections}
+  facts={[
+    { label: 'Role', value: 'Designed and built all five parts. Solo' },
+    { label: 'When', value: '2026' },
+    { label: 'Tools', value: 'Python, LightGBM, scikit-learn, pandas, NumPy, Gemini API' },
+    {
+      label: 'Repository',
+      value: 'github.com/Harsh-159/day_ahead_price_forcasting',
+      href: 'https://github.com/Harsh-159/day_ahead_price_forcasting',
+    },
+  ]}
+>
+  <section id="plain-words" aria-labelledby="plain-words-h">
+    <h2 id="plain-words-h">In plain words</h2>
+    <p>
+      Electricity for each hour of tomorrow is priced by an auction today, the <Term id="day-ahead-price">day-ahead price</Term>.
+      Traders want to know those prices before the auction settles. This project forecasts all 24 hourly prices for the
+      German and Luxembourg market zone, called DE_LU. It turns the forecasts into buy, sell or hold signals, and has an AI
+      model write a morning briefing. The model is never trusted with a number: code inserts every figure and checks every
+      citation.
+    </p>
+    <p class="small soft">
+      The headline numbers come from a <Term id="held-out-test">held-out test</Term>. Accuracy is given as <Term id="mae">MAE</Term>,
+      <Term id="directional-accuracy">directional accuracy</Term> and a <Term id="skill-score">skill score</Term> against a
+      <Term id="seasonal-naive">seasonal naive</Term> baseline.
+    </p>
+  </section>
+
+  <section class="figure-section"><Headline client:visible /></section>
+  <section class="figure-section"><Explorer client:visible /></section>
+  <section class="figure-section"><Stages client:visible /></section>
+  <section class="figure-section"><Validation client:visible /></section>
+  <section class="figure-section"><Signals client:visible /></section>
+  <section class="figure-section"><Briefing client:visible /></section>
+  <section class="figure-section"><DataChecks client:visible /></section>
+
+  <section id="how" aria-labelledby="how-h">
+    <h2 id="how-h">How it works</h2>
+    <ol class="steps">
+      <li>Ingest prices, wind, solar, load and gas, then run 10 data checks.</li>
+      <li>
+        Build 60+ features, including <Term id="residual-load">residual load</Term>, and forecast every hour of the next day.
+      </li>
+      <li>Average the forecasts into week, month and quarter fair values, and compare them with a curve proxy to get signals.</li>
+      <li>Assemble evidence, have the model write commentary, insert the numbers by code, and validate every citation.</li>
+      <li>Produce a daily PDF report and a workbook, and serve them from a small dashboard.</li>
+    </ol>
+    <p class="small soft">
+      The 12 cross-validation folds are a form of <Term id="walk-forward">walk-forward validation</Term>. The 11,999-hour figure is a held-out test.
+    </p>
+  </section>
+
+  <section id="trade-offs" aria-labelledby="trade-offs-h">
+    <h2 id="trade-offs-h">Decisions and trade-offs</h2>
+    <ul>
+      <li>An unbiased forecast over the lowest hourly miss. The weekly and monthly misses, which the signals use, both improve.</li>
+      <li>Recent data weighted more, with a one-year half-life, so the 2022 crisis counts for less.</li>
+      <li>The model writes words and code writes numbers, so a citation can be checked mechanically.</li>
+    </ul>
+  </section>
+
+  <section id="limits" aria-labelledby="limits-h">
+    <h2 id="limits-h">Limits and what I would do next</h2>
+    <ul>
+      <li>The ensemble is not significantly better than LightGBM alone on the cross-validation folds.</li>
+      <li>Misses concentrate in price spikes. On 12 December 2024 the average miss was 212.6.</li>
+      <li>The model was trained once and not retrained during the test, which lasts about 16 months.</li>
+      <li>The signals are measured against a trailing average, not a traded forward curve, and the backtest ignores costs.</li>
+      <li>Gas prices need a manual download.</li>
+    </ul>
+  </section>
+
+  <section id="real" aria-labelledby="real-h">
+    <h2 id="real-h">What is real here</h2>
+    <p class="real-box">
+      Every chart on this page is drawn from files in the repository: 11,999 hourly predictions, 500 daily signals, 12
+      cross-validation folds, 1,621 flagged rows and three stored briefings. The numbers are recomputed in your browser.
+      Nothing on this page is simulated.
+    </p>
+  </section>
+</Lab>

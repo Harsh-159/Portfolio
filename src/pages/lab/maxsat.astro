@@ -1,0 +1,91 @@
+---
+import Lab from '../../layouts/Lab.astro';
+import Term from '../../components/Term.astro';
+import MaxSat from '../../islands/MaxSat';
+
+const sections = [
+  { id: 'plain-words', label: 'In plain words' },
+  { id: 'solver', label: 'Figure 1: run the solver' },
+  { id: 'how', label: 'How it works' },
+  { id: 'trade-offs', label: 'Decisions and trade-offs' },
+  { id: 'limits', label: 'Limits and next steps' },
+  { id: 'real', label: 'What is real here' },
+];
+---
+
+<Lab
+  slug="maxsat"
+  title="MaxSAT solver"
+  context="MSc coursework, Evolutionary Computation, 2025"
+  summary="An evolutionary search with a local-search boost, solving benchmark problems in your browser."
+  sections={sections}
+  facts={[
+    { label: 'Role', value: 'Sole author' },
+    { label: 'When', value: '2025. Module mark 97 out of 100' },
+    { label: 'Tools', value: 'Python' },
+    {
+      label: 'Repository',
+      value: 'github.com/Harsh-159/evolutionary-maxsat-solver',
+      href: 'https://github.com/Harsh-159/evolutionary-maxsat-solver',
+    },
+  ]}
+>
+  <section id="plain-words" aria-labelledby="plain-words-h">
+    <h2 id="plain-words-h">In plain words</h2>
+    <p>
+      Some problems are long lists of conditions that cannot all be true at once. <Term id="maxsat">MaxSAT</Term> asks for
+      the answer that satisfies as many as possible. Trying every answer is hopeless: 147 yes-or-no variables give about 10
+      to the power 44 combinations. This solver keeps a population of candidate answers, breeds and mutates the better ones,
+      and gives some of them a quick polish by local search, which makes it a <Term id="memetic">memetic algorithm</Term>.
+    </p>
+  </section>
+
+  <section class="figure-section"><MaxSat client:visible /></section>
+
+  <section id="how" aria-labelledby="how-h">
+    <h2 id="how-h">How it works</h2>
+    <ol class="steps">
+      <li>Start with random answers: one true-or-false value per variable for each member of the population.</li>
+      <li>Choose each parent by tournament: draw 5 members at random and keep the best.</li>
+      <li>Cross two parents: each variable comes from one parent or the other with equal chance.</li>
+      <li>Mutate the child: flip each variable with probability 1/n, so about one flip per child.</li>
+      <li>
+        For 15% of children, run local search: scan the variables in random order and flip any that satisfies more clauses.
+        Stop when a full scan finds no improvement, or after flips equal to half the number of variables.
+      </li>
+      <li>Carry the best member into the next generation unchanged.</li>
+      <li>Repeat until the budget is spent.</li>
+    </ol>
+    <p>
+      Fitness is kept up to date incrementally. Each clause has a count of how many of its literals are true, and each
+      variable has an index of the clauses it appears in. The gain from flipping one variable is read from those two
+      structures without re-reading the formula.
+    </p>
+  </section>
+
+  <section id="trade-offs" aria-labelledby="trade-offs-h">
+    <h2 id="trade-offs-h">Decisions and trade-offs</h2>
+    <ul>
+      <li>Local search on 15% of children, not all. It exploits hard, and using it everywhere would leave too little exploration.</li>
+      <li>Mutation at 1/n, which gives one expected flip per child.</li>
+      <li>Incremental fitness over full re-evaluation, so a flip costs only the clauses that variable touches.</li>
+    </ul>
+  </section>
+
+  <section id="limits" aria-labelledby="limits-h">
+    <h2 id="limits-h">Limits and what I would do next</h2>
+    <ul>
+      <li>It solves unweighted MaxSAT only. Every clause counts the same, as the coursework specified.</li>
+      <li>This page uses a generation budget. The original uses a time budget.</li>
+      <li>There is no comparison with exact solvers.</li>
+    </ul>
+  </section>
+
+  <section id="real" aria-labelledby="real-h">
+    <h2 id="real-h">What is real here</h2>
+    <p class="real-box">
+      The algorithm and its default settings are those of my coursework solver. The code running on this page is a
+      JavaScript port of it. The four problems come from the MaxSAT Evaluation 2017 benchmark set.
+    </p>
+  </section>
+</Lab>

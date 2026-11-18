@@ -1,0 +1,50 @@
+---
+import Lab from '../../layouts/Lab.astro';
+import Stocks from '../../islands/Stocks';
+
+const sections = [
+  { id: 'plain-words', label: 'In plain words' },
+  { id: 'simulator', label: 'Figure 1: the simulator' },
+  { id: 'limits', label: 'Limits and next steps' },
+  { id: 'real', label: 'What is real here' },
+];
+---
+
+<Lab
+  slug="stocks"
+  title="Stock simulator"
+  context="My first full-stack project, remade"
+  summary="Buy and sell invented tickers on simulated prices."
+  sections={sections}
+  facts={[
+    { label: 'Role', value: 'Sole author of the original and the remake' },
+    { label: 'Original project', value: 'github.com/Harsh-159/Stock-Simulator', href: 'https://github.com/Harsh-159/Stock-Simulator' },
+  ]}
+>
+  <section id="plain-words" aria-labelledby="plain-words-h">
+    <h2 id="plain-words-h">In plain words</h2>
+    <p>
+      My first full-stack project was a stock trading simulator, built for Harvard's CS50 course with Flask, SQL and a
+      market data API, with sign-in and a database. This page is a remake that runs entirely in your browser. The tickers
+      are invented and the prices are a random walk.
+    </p>
+  </section>
+
+  <section class="figure-section"><Stocks client:visible /></section>
+
+  <section id="limits" aria-labelledby="limits-h">
+    <h2 id="limits-h">Limits and what I would do next</h2>
+    <ul>
+      <li>These are not market prices. There are no fees and no real companies.</li>
+      <li>Nothing is saved. Closing the page resets the portfolio.</li>
+    </ul>
+  </section>
+
+  <section id="real" aria-labelledby="real-h">
+    <h2 id="real-h">What is real here</h2>
+    <p class="real-box">
+      The original project is real and linked above. This remake reproduces its buying, selling and portfolio logic on
+      simulated prices.
+    </p>
+  </section>
+</Lab>

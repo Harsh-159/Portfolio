@@ -1,124 +1,161 @@
-import { LINKS } from './profile';
+// Sections 5.7, 7.4 and 8.1: the eight lab pages, their badges and their order.
 
-export type LabStatus = 'live' | 'in-training' | 'planned';
+export type BadgeKind = 'real' | 'replay' | 'live' | 'reconstruction' | 'concept' | 'simulation';
 
-export type PreviewKind =
-  | 'tokenizer'
-  | 'forecast'
-  | 'pipeline'
-  | 'attention'
-  | 'matcher'
-  | 'stocks'
-  | 'locked';
+export const badges: Record<BadgeKind, { label: string; explanation: string }> = {
+  real: { label: 'Real data', explanation: "Computed in your browser from the project's own output files" },
+  replay: { label: 'Replay', explanation: 'Recorded runs of the real system, replayed step by step' },
+  live: {
+    label: 'Live algorithm',
+    explanation: 'The algorithm runs in your browser. It is a JavaScript port of the Python original',
+  },
+  reconstruction: {
+    label: 'Reconstruction',
+    explanation: 'A rebuild of internal work. The structure is real and the data is illustrative',
+  },
+  concept: { label: 'Concept sketch', explanation: 'An illustration of the idea. It shows no results' },
+  simulation: { label: 'Simulation', explanation: 'Invented tickers on simulated prices' },
+};
+
+/** The five badges shown in the "How to read this site" legend. */
+export const legendBadges: BadgeKind[] = ['real', 'replay', 'live', 'reconstruction', 'concept'];
+
+export type Focus = 'agents' | 'quant' | 'algorithms' | 'fullstack';
+
+export const filters: { id: Focus | 'all'; label: string }[] = [
+  { id: 'all', label: 'All' },
+  { id: 'agents', label: 'Agents and evaluation' },
+  { id: 'quant', label: 'Forecasting and research' },
+  { id: 'algorithms', label: 'Algorithms' },
+  { id: 'fullstack', label: 'Full-stack' },
+];
 
 export interface Lab {
-  id: string;
+  slug: string;
   title: string;
-  /** Route for live demos; undefined for locked cards. */
-  route?: string;
-  status: LabStatus;
-  /** Short tag shown on the card stating which claim it backs. */
-  claim: string;
-  /** "Why this exists" one-liner shown on the demo page. */
-  why: string;
-  /** GitHub link to the engine source. */
-  source?: string;
-  preview: PreviewKind;
-  /** Plan shown when a locked card expands. */
-  plan?: string[];
+  context: string;
+  badge: BadgeKind;
+  what: string;
+  thirty: string;
+  focus: Focus;
+  featured: boolean;
 }
 
-const src = (file: string) => `${LINKS.repo}/blob/main/src/lib/${file}`;
-
-export const LABS: Lab[] = [
+/** Index order on the home page (section 7.4). */
+export const labs: Lab[] = [
   {
-    id: 'tokenizer',
-    title: 'BPE tokenizer playground',
-    route: '/lab/tokenizer',
-    status: 'live',
-    claim: 'From my LLM build',
-    why: 'I am building an LLM from scratch, and the tokenizer is done. Train byte-pair encoding live, then tokenise anything.',
-    source: src('bpe.ts'),
-    preview: 'tokenizer',
+    slug: 'pipeline',
+    title: 'Approval rules from plain English',
+    context: 'Oracle, 2023 to 2025',
+    badge: 'reconstruction',
+    what: 'An administrator types what they want. Nineteen prompts turn it into approval rules.',
+    thirty: 'Run a request and switch between sequential and parallel.',
+    focus: 'agents',
+    featured: true,
   },
   {
-    id: 'forecast',
+    slug: 'prompt-testing',
+    title: 'Prompt testing tool',
+    context: 'Oracle, 2023 to 2025',
+    badge: 'reconstruction',
+    what: 'A test bench for prompts: load cases, run them, score the answers and see why they fail.',
+    thirty: 'Turn on post-processing and watch accuracy change.',
+    focus: 'agents',
+    featured: true,
+  },
+  {
+    slug: 'orchestrator',
+    title: 'Multi-Tool Agentic Orchestrator',
+    context: 'Engineering case study, 2026',
+    badge: 'real',
+    what: 'One agent, 191 tools, 7 services. The model only sees the tools a request needs.',
+    thirty: 'Pick a request and see which tools survive routing.',
+    focus: 'agents',
+    featured: true,
+  },
+  {
+    slug: 'forecast',
     title: 'DE_LU Power Intelligence',
-    route: '/lab/forecast',
-    status: 'live',
-    claim: 'Forecasts, signals, and AI desk briefings for German power. 86.7% directional accuracy out of sample.',
-    why: 'German day-ahead power price forecasting, trading signals, and automated desk briefings. A five-component daily pipeline built for an energy-trading technical case study.',
-    source: 'https://github.com/Harsh-159/cobblestone_energy_case_study',
-    preview: 'forecast',
+    context: 'Energy-trading case study, 2026',
+    badge: 'real',
+    what: "Forecasts tomorrow's German electricity prices, turns them into signals and writes a briefing whose every number is checked.",
+    thirty: 'Jump to the worst day, then break a citation.',
+    focus: 'quant',
+    featured: true,
   },
   {
-    id: 'pipeline',
-    title: '19-agent pipeline replay',
-    route: '/lab/pipeline',
-    status: 'live',
-    claim: 'Built at Oracle',
-    why: 'I built a 19-agent production pipeline at Oracle for AI-powered approval rule generation. This is an anonymised reconstruction.',
-    preview: 'pipeline',
+    slug: 'dissertation',
+    title: 'Regime-gated reservoir computing',
+    context: 'MSc dissertation, 2026',
+    badge: 'concept',
+    what: 'A portfolio model trained on the decision it makes, not on a forecast. Architecture only, no results.',
+    thirty: 'Spin up a reservoir and change its memory.',
+    focus: 'quant',
+    featured: false,
   },
   {
-    id: 'attention',
-    title: 'Causal self-attention',
-    route: '/lab/attention',
-    status: 'live',
-    claim: 'From my LLM build',
-    why: 'I have implemented attention from scratch. Step through embeddings, scores, the causal mask, softmax and the output.',
-    source: src('attention.ts'),
-    preview: 'attention',
-  },
-  {
-    id: 'matcher',
+    slug: 'matcher',
     title: 'String matching algorithm',
-    route: '/lab/matcher',
-    status: 'live',
-    claim: 'Built at Oracle',
-    why: 'I built a string matching algorithm at Oracle for approval-rule search: word-level matching with typo tolerance, word transpositions, insertions and deletions, and a strict penalty for foreign words.',
-    source: src('fuzzyMatcher.ts'),
-    preview: 'matcher',
+    context: 'Oracle, 2023 to 2025',
+    badge: 'reconstruction',
+    what: 'Finds the right approval rule when the search has typos, swapped words or missing words.',
+    thirty: 'Type a misspelt query and read the alignment.',
+    focus: 'algorithms',
+    featured: false,
   },
   {
-    id: 'stocks',
+    slug: 'maxsat',
+    title: 'MaxSAT solver',
+    context: 'MSc coursework, 2025',
+    badge: 'live',
+    what: 'An evolutionary search with a local-search boost, solving benchmark problems in your browser.',
+    thirty: 'Run it with and without local search.',
+    focus: 'algorithms',
+    featured: false,
+  },
+  {
+    slug: 'stocks',
     title: 'Stock simulator',
-    route: '/lab/stocks',
-    status: 'live',
-    claim: 'My first full-stack project, remade to run in your browser.',
-    why: 'I have been shipping full-stack projects since my CS50 days. This is that stock simulator, remade to trade simulated prices entirely in your browser.',
-    source: 'https://github.com/Harsh-159/Stock-Simulator',
-    preview: 'stocks',
-  },
-  {
-    id: 'generation',
-    title: 'TinyStories generation',
-    status: 'in-training',
-    claim: 'Next in my LLM build',
-    why: 'In-browser text generation once my training run on TinyStories completes.',
-    preview: 'locked',
-    plan: [
-      'Finish the dataloader and attention blocks.',
-      'Train a small model on TinyStories V2-GPT4.',
-      'Export weights and run generation in the browser with WebGPU.',
-    ],
-  },
-  {
-    id: 'cuda',
-    title: 'CUDA inference engine',
-    status: 'planned',
-    claim: 'Planned',
-    why: 'A CUDA-accelerated LLM inference engine, target model Llama 3.2 1B.',
-    preview: 'locked',
-    plan: [
-      'Naive PyTorch baseline',
-      'KV cache',
-      'FlashAttention-style Triton kernel',
-      'Quantisation',
-      'Continuous batching',
-      'Stretch goals',
-    ],
+    context: 'First full-stack project, remade',
+    badge: 'simulation',
+    what: 'Buy and sell invented tickers on simulated prices.',
+    thirty: 'Buy a stock and watch the portfolio move.',
+    focus: 'fullstack',
+    featured: false,
   },
 ];
 
-export const LIVE_LABS = LABS.filter((l) => l.route);
+/** Previous and next order (section 8.1). */
+export const labOrder = [
+  'pipeline',
+  'prompt-testing',
+  'matcher',
+  'orchestrator',
+  'forecast',
+  'dissertation',
+  'maxsat',
+  'stocks',
+] as const;
+
+/** Page titles, which differ from the index title for the dissertation. */
+export const labPageTitles: Record<string, string> = {
+  pipeline: 'Approval rules from plain English',
+  'prompt-testing': 'Prompt testing tool',
+  matcher: 'String matching algorithm',
+  orchestrator: 'Multi-Tool Agentic Orchestrator',
+  forecast: 'DE_LU Power Intelligence',
+  dissertation: 'Decision-Focused Regime-Gated Reservoir Computing',
+  maxsat: 'MaxSAT solver',
+  stocks: 'Stock simulator',
+};
+
+export function neighbours(slug: string) {
+  const i = labOrder.indexOf(slug as (typeof labOrder)[number]);
+  const n = labOrder.length;
+  const prev = labOrder[(i - 1 + n) % n];
+  const next = labOrder[(i + 1) % n];
+  return {
+    prev: { slug: prev, title: labPageTitles[prev] },
+    next: { slug: next, title: labPageTitles[next] },
+  };
+}

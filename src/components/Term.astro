@@ -1,0 +1,11 @@
+---
+// Glossary term (section 6.4): dotted underline, definition on hover, focus or tap.
+import { glossary, type GlossaryId } from '../content/glossary';
+interface Props {
+  id: GlossaryId;
+}
+const { id } = Astro.props;
+if (!glossary[id]) throw new Error(`Unknown glossary id: ${id}`);
+---
+
+<button type="button" class="term" data-term={id}><slot /></button>

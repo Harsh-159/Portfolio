@@ -1,0 +1,128 @@
+---
+import Lab from '../../layouts/Lab.astro';
+import Term from '../../components/Term.astro';
+import Routing from '../../islands/orchestrator/Routing';
+import Runs from '../../islands/orchestrator/Runs';
+import Guards from '../../islands/orchestrator/Guards';
+
+const sections = [
+  { id: 'plain-words', label: 'In plain words' },
+  { id: 'routing', label: 'Figure 1: routing' },
+  { id: 'runs', label: 'Figure 2: recorded runs' },
+  { id: 'guards', label: 'Figure 3: loop limits' },
+  { id: 'how', label: 'How it works' },
+  { id: 'details', label: 'Details that mattered' },
+  { id: 'trade-offs', label: 'Decisions and trade-offs' },
+  { id: 'limits', label: 'Limits and next steps' },
+  { id: 'real', label: 'What is real here' },
+];
+---
+
+<Lab
+  slug="orchestrator"
+  title="Multi-Tool Agentic Orchestrator"
+  context="Engineering case study, 2026"
+  summary="One agent, 191 tools, 7 services. The model only sees the tools a request needs."
+  sections={sections}
+  facts={[
+    {
+      label: 'Role',
+      value: 'Designed and built the chat endpoint, routing, loop, prompts, telemetry and tests. The server, mock services and tool registry were provided',
+    },
+    { label: 'When', value: '2026. Built as a timed four-hour exercise' },
+    { label: 'Tools', value: 'Python, FastAPI, OpenAI Responses API with gpt-4.1 and gpt-4.1-mini' },
+    { label: 'Repository', value: 'github.com/Harsh-159/tool_orchestrator', href: 'https://github.com/Harsh-159/tool_orchestrator' },
+  ]}
+>
+  <section id="plain-words" aria-labelledby="plain-words-h">
+    <h2 id="plain-words-h">In plain words</h2>
+    <p>
+      An assistant that reads email, books meetings, searches files, posts to chat and files issues needs a tool for each
+      action. Here there are 191. A model chooses less reliably as the list grows, and every tool description costs tokens.
+      This agent first works out which services a request touches, shows the model a short list of tools, and gives it a
+      way to ask for more. Limits and logging stop a run from going wrong quietly.
+    </p>
+  </section>
+
+  <section class="figure-section">
+    <Routing client:visible />
+  </section>
+  <section class="figure-section">
+    <Runs client:visible />
+  </section>
+  <section class="figure-section">
+    <Guards client:visible />
+  </section>
+
+  <section id="how" aria-labelledby="how-h">
+    <h2 id="how-h">How it works</h2>
+    <ol class="steps">
+      <li>
+        A lenient classifier reads the conversation and names every service any step might need. A strict JSON schema
+        limits it to the seven names, a form of <Term id="structured-output">structured output</Term>.
+      </li>
+      <li>If those services hold 28 tools or fewer, the model gets all of them. There is no second call.</li>
+      <li>
+        If they hold more, a finder model writes a short plan and shortlists up to 15 tools. Anchor tools for each service
+        are always added, so the agent can always look things up.
+      </li>
+      <li>
+        The loop runs. The model calls tools, together when they are independent, through
+        <Term id="tool-calling">tool calling</Term>. Results and errors go back to it.
+      </li>
+      <li>If it lacks a tool mid-run, it calls <code>find_more_tools</code>, which searches the whole catalogue and adds up to 10.</li>
+      <li>The run ends when the model replies in text, or when a limit is reached and it must wrap up honestly.</li>
+      <li>Every turn logs one line: duration, tools routed, tool and model calls, tokens and estimated cost.</li>
+    </ol>
+  </section>
+
+  <section id="details" aria-labelledby="details-h">
+    <h2 id="details-h">Details that mattered</h2>
+    <ul>
+      <li>
+        Tool names in the registry mix upper and lower case. Smaller models changed the case when repeating them, which
+        silently dropped tools from shortlists until name matching ignored case.
+      </li>
+      <li>
+        The mock GitHub search matches plain substrings, so the model's habit of adding <code>is:open</code> gave confident
+        wrong answers. A corrective note is added to the tool description when it is rendered.
+      </li>
+      <li>The agent reads the mock world's clock, so "today" and "next week" resolve inside that world.</li>
+    </ul>
+  </section>
+
+  <section id="trade-offs" aria-labelledby="trade-offs-h">
+    <h2 id="trade-offs-h">Decisions and trade-offs</h2>
+    <ul>
+      <li>A model as the router over embedding search, because embedding search struggles when a later step needs a tool the request never mentions.</li>
+      <li>Recall over precision in routing. A missing tool is fatal and an extra one is cheap.</li>
+      <li>
+        A stronger model for the finder and a cheaper one for the loop. The finder call is small and rare, about $0.006
+        each time. The loop is where the tokens go.
+      </li>
+      <li>
+        Ask one question when a request is truly ambiguous, and never change a guessed target. Asking costs a turn. A wrong
+        delete or send cannot be taken back.
+      </li>
+    </ul>
+  </section>
+
+  <section id="limits" aria-labelledby="limits-h">
+    <h2 id="limits-h">Limits and what I would do next</h2>
+    <ul>
+      <li>The evaluation is narrow. Complex multi-step cases and prompt injection are untested, and parallel calls need more testing.</li>
+      <li>The limit of 28 is an assumption that needs measuring.</li>
+      <li>For a thousand tools or more I would add a retrieval step before the finder.</li>
+      <li>I would build an evaluation pipeline that runs many varied cases and points to where a failure comes from.</li>
+    </ul>
+  </section>
+
+  <section id="real" aria-labelledby="real-h">
+    <h2 id="real-h">What is real here</h2>
+    <p class="real-box">
+      The tool catalogue, the routing rule, its constants and every recorded run come from the repository. Figures 1 and 3
+      run that logic in your browser. They do not call a language model, so the classifier and finder choices appear only
+      in the recorded runs.
+    </p>
+  </section>
+</Lab>

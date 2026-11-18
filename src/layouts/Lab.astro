@@ -1,0 +1,112 @@
+---
+// Section 8: the lab page template.
+import Base from './Base.astro';
+import { neighbours } from '../content/labs';
+import '../styles/lab.css';
+import '../styles/figures.css';
+
+export interface Fact {
+  label: string;
+  value: string;
+  href?: string;
+}
+
+interface Props {
+  slug: string;
+  title: string;
+  context: string;
+  summary: string;
+  facts: Fact[];
+  sections: { id: string; label: string }[];
+  description?: string;
+}
+
+const { slug, title, context, summary, facts, sections, description } = Astro.props;
+const { prev, next } = neighbours(slug);
+---
+
+<Base title={title} description={description ?? summary} path={`/lab/${slug}`}>
+  <div class="wrap lab">
+    <div class="lab-head">
+      <p class="back"><a href="/#lab">Back to the lab</a></p>
+      <h1 class="lab-title">{title}</h1>
+      <p class="lab-context">{context}</p>
+      <p class="lab-summary">{summary}</p>
+    </div>
+
+    <div class="lab-grid">
+      <aside class="lab-margin" aria-label="About this project">
+        <div class="lab-margin-inner">
+          <dl class="facts margin-note">
+            {
+              facts.map((f) => (
+                <>
+                  <dt>{f.label}</dt>
+                  <dd>{f.href ? <a href={f.href} rel="noopener" data-track="repo">{f.value}</a> : f.value}</dd>
+                </>
+              ))
+            }
+          </dl>
+          <nav class="toc toc-wide" aria-label="On this page">
+            <p class="h4">On this page</p>
+            <ul>
+              {
+                sections.map((s) => (
+                  <li>
+                    <a href={`#${s.id}`} data-toc={s.id}>
+                      {s.label}
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </nav>
+        </div>
+      </aside>
+
+      <div class="lab-main">
+        <details class="toc toc-narrow">
+          <summary>On this page</summary>
+          <ul>
+            {
+              sections.map((s) => (
+                <li>
+                  <a href={`#${s.id}`}>{s.label}</a>
+                </li>
+              ))
+            }
+          </ul>
+        </details>
+        <slot />
+        <nav class="prevnext" aria-label="Other demos">
+          <a href={`/lab/${prev.slug}`} rel="prev">
+            <span class="soft small">Previous demo</span>
+            <span>{prev.title}</span>
+          </a>
+          <a href={`/lab/${next.slug}`} rel="next" class="next">
+            <span class="soft small">Next demo</span>
+            <span>{next.title}</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </div>
+</Base>
+
+<script>
+  // Marks the current section in the "On this page" list.
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-toc]')];
+  const targets = links.map((a) => document.getElementById(a.dataset.toc!)).filter(Boolean) as HTMLElement[];
+  const io = new IntersectionObserver(
+    (entries) => {
+      const vis = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+      if (!vis.length) return;
+      links.forEach((a) => {
+        if (a.dataset.toc === vis[0].target.id) a.setAttribute('aria-current', 'true');
+        else a.removeAttribute('aria-current');
+      });
+    },
+    { rootMargin: '-80px 0px -55% 0px' },
+  );
+  targets.forEach((t) => io.observe(t));
+</script>

@@ -1,0 +1,81 @@
+---
+import Lab from '../../layouts/Lab.astro';
+import Term from '../../components/Term.astro';
+import Matcher from '../../islands/Matcher';
+import { ORACLE_INTERNAL } from '../../content/site';
+
+const sections = [
+  { id: 'plain-words', label: 'In plain words' },
+  { id: 'matcher', label: 'Figure 1: the matcher' },
+  { id: 'costs', label: 'Figure 2: tune the costs' },
+  { id: 'how', label: 'How it works' },
+  { id: 'trade-offs', label: 'Decisions and trade-offs' },
+  { id: 'limits', label: 'Limits and next steps' },
+  { id: 'real', label: 'What is real here' },
+];
+---
+
+<Lab
+  slug="matcher"
+  title="String matching algorithm"
+  context="Oracle, 2023 to 2025"
+  summary="Finds the right approval rule when the search has typos, swapped words or missing words."
+  sections={sections}
+  facts={[
+    { label: 'Role', value: 'Designed and built it' },
+    { label: 'Tools', value: 'Built on Levenshtein distance' },
+    { label: 'Links', value: `None. ${ORACLE_INTERNAL}` },
+  ]}
+>
+  <section id="plain-words" aria-labelledby="plain-words-h">
+    <h2 id="plain-words-h">In plain words</h2>
+    <p>
+      People searching for a rule rarely type its exact name. They misspell, drop a word or put words in a different
+      order. A plain text search then finds nothing, or finds the wrong thing. This matcher compares whole words, forgives
+      small mistakes and refuses to be fooled by one matching word among unrelated ones.
+    </p>
+  </section>
+
+  <section class="figure-section">
+    <Matcher client:visible />
+  </section>
+
+  <section id="how" aria-labelledby="how-h">
+    <h2 id="how-h">How it works</h2>
+    <ol class="steps">
+      <li>Split both texts into lower-case words.</li>
+      <li>
+        Compare word with word. Identical words cost nothing. Nearly identical words count as a typo, measured by
+        <Term id="levenshtein">Levenshtein distance</Term>.
+      </li>
+      <li>Find the cheapest way to line up the two word sequences, allowing a swap of neighbours, a missing word or an extra word.</li>
+      <li>Add a penalty for each search word that resembles nothing in the entry.</li>
+      <li>Turn the total cost into a score from 0 to 100.</li>
+    </ol>
+  </section>
+
+  <section id="trade-offs" aria-labelledby="trade-offs-h">
+    <h2 id="trade-offs-h">Decisions and trade-offs</h2>
+    <ul>
+      <li>Words are the unit, not characters. Character distance is used only inside a word, to spot typos.</li>
+      <li>A different word costs more than a missing word plus an extra word, so unrelated words line up as gaps and not as substitutions.</li>
+      <li>The penalty for unrelated words is harsh on purpose, so one matching word among irrelevant ones cannot produce a false match.</li>
+    </ul>
+  </section>
+
+  <section id="limits" aria-labelledby="limits-h">
+    <h2 id="limits-h">Limits and what I would do next</h2>
+    <ul>
+      <li>The costs are sensible defaults. They have not been tuned on real search logs.</li>
+      <li>It compares spelling, not meaning. "Boss" does not match "manager".</li>
+    </ul>
+  </section>
+
+  <section id="real" aria-labelledby="real-h">
+    <h2 id="real-h">What is real here</h2>
+    <p class="real-box">
+      The approach is the one I built at Oracle for approval-rule search. The code on this page is a clean-room rebuild and
+      the entries are invented.
+    </p>
+  </section>
+</Lab>

@@ -1,0 +1,98 @@
+---
+import Lab from '../../layouts/Lab.astro';
+import Term from '../../components/Term.astro';
+import RuleAnatomy from '../../islands/pipeline/RuleAnatomy';
+import PipelineExplorer from '../../islands/pipeline/PipelineExplorer';
+import LatencyLab from '../../islands/pipeline/LatencyLab';
+import { ORACLE_INTERNAL, confirmed } from '../../content/site';
+
+const sections = [
+  { id: 'plain-words', label: 'In plain words' },
+  { id: 'rule', label: 'Figure 1: a rule' },
+  { id: 'stages', label: 'Figure 2: the pipeline' },
+  { id: 'latency', label: 'Figure 3: latency' },
+  { id: 'how', label: 'How it works' },
+  { id: 'trade-offs', label: 'Decisions and trade-offs' },
+  { id: 'limits', label: 'Limits and next steps' },
+  { id: 'real', label: 'What is real here' },
+];
+---
+
+<Lab
+  slug="pipeline"
+  title="Approval rules from plain English"
+  context="Oracle, 2023 to 2025"
+  summary="An administrator types what they want. Nineteen prompts turn it into approval rules."
+  sections={sections}
+  facts={[
+    { label: 'Role', value: 'Proposed it, designed it, built it and took it to production' },
+    { label: 'When', value: 'During 2023 to 2025' },
+    { label: 'Team', value: 'Transaction Framework, Oracle HCM' },
+    { label: 'Tools', value: "Oracle's internal LLM APIs and Prompt Lab" },
+    { label: 'Links', value: `None. ${ORACLE_INTERNAL}` },
+  ]}
+>
+  <section id="plain-words" aria-labelledby="plain-words-h">
+    <h2 id="plain-words-h">In plain words</h2>
+    <p>
+      In HR software, an <Term id="approval-rule">approval rule</Term> decides who must sign off a request and under what
+      conditions. Setting these rules up by hand takes many screens and many clicks. This feature lets an administrator
+      type the change in plain English. A pipeline of 19 small <Term id="prompt">prompts</Term> splits the request, works
+      out each condition and each list of approvers, and returns rules the screen can draw and save.
+    </p>
+  </section>
+
+  <section class="figure-section">
+    <RuleAnatomy client:visible />
+  </section>
+
+  <section class="figure-section">
+    <PipelineExplorer client:visible />
+  </section>
+
+  <section class="figure-section">
+    <LatencyLab client:visible />
+  </section>
+
+  <section id="how" aria-labelledby="how-h">
+    <h2 id="how-h">How it works</h2>
+    <ol class="steps">
+      <li>The administrator types a request in the Approval Rules screen.</li>
+      <li>Split breaks it into add, update and delete parts and names the rule each part targets. Its output is JSON.</li>
+      <li>
+        For an add or an update, two things run side by side. Condition extracts the condition and Semantic match ties
+        its attributes to real ones. Classify picks one of seven <Term id="list-builder">list builders</Term>, and that
+        builder's prompt fills in its settings.
+      </li>
+      <li>For a delete, one prompt finds which list builder to remove and where it sits.</li>
+      <li>The results are merged into the existing rules JSON.</li>
+      <li>The screen draws the updated rules for the administrator, and saving goes through the existing rules API.</li>
+    </ol>
+  </section>
+
+  <section id="trade-offs" aria-labelledby="trade-offs-h">
+    <h2 id="trade-offs-h">Decisions and trade-offs</h2>
+    <ul>
+      <li>JSON between every step, so each prompt's output can be checked by code before the next step uses it.</li>
+      <li>Parallel branches over one long chain, because waiting time grew with every call.</li>
+      {confirmed.smallPromptsReason && <li>Many small prompts, each with one job. Each prompt has one job, so each could be tested on its own with the prompt testing tool.</li>}
+    </ul>
+  </section>
+
+  <section id="limits" aria-labelledby="limits-h">
+    <h2 id="limits-h">Limits and what I would do next</h2>
+    <ul>
+      <li>This page is a rebuild from memory. Prompts, data and the names of internal systems are left out.</li>
+      <li>The timings are estimates from two figures measured at the time.</li>
+    </ul>
+  </section>
+
+  <section id="real" aria-labelledby="real-h">
+    <h2 id="real-h">What is real here</h2>
+    <p class="real-box">
+      The stages, their order, which of them run side by side, the seven list builders and the two timing figures are
+      real. The requests, the rule names and the JSON in the inspector were written for this page. No Oracle code, prompt
+      or data appears here.
+    </p>
+  </section>
+</Lab>

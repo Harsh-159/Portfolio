@@ -1,0 +1,463 @@
+---
+import Base from '../layouts/Base.astro';
+import Ev from '../components/Ev.astro';
+import Badge from '../components/Badge.astro';
+import HeroTrace from '../islands/HeroTrace';
+import { PipelinePreview, BenchPreview, ToolsPreview } from '../islands/Previews';
+import { site } from '../content/site';
+import { labs, filters, badges, legendBadges } from '../content/labs';
+import { experience, conclusions, education, awards, skillGroups, moreWork } from '../content/profile';
+import tail from '../content/generated/forecastTail.json';
+import '../styles/home.css';
+
+// Row 4 preview: the last seven days of real actual and predicted prices, drawn at build time.
+const W = 300;
+const t168 = { start: new Date(Date.parse(tail.start) + 168 * 3600e3).toISOString(), actual: tail.actual.slice(-168), pred: tail.pred.slice(-168) };
+const H = 120;
+const all = [...t168.actual, ...t168.pred];
+const lo = Math.min(...all);
+const hi = Math.max(...all);
+const x = (i: number) => (i / (t168.actual.length - 1)) * W;
+const y = (v: number) => H - 6 - ((v - lo) / (hi - lo)) * (H - 12);
+const path = (s: number[]) => s.map((v, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join('');
+const tailStart = new Date(t168.start);
+const tailEnd = new Date(tailStart.getTime() + 167 * 3600e3);
+const dfmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', timeZone: 'UTC' });
+const tailMae = t168.actual.reduce((s, v, i) => s + Math.abs(v - t168.pred[i]), 0) / t168.actual.length;
+
+const previews: Record<string, string> = { pipeline: 'pipeline', 'prompt-testing': 'bench', orchestrator: 'tools', forecast: 'forecast' };
+---
+
+<Base title="Home" description={site.description} path="/" home>
+  <div class="wrap">
+    <!-- Hero -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-text">
+        <p class="hero-open">Harsh Yadav, AI engineer. Based in the UK and available immediately.</p>
+        <h1 id="hero-title">I make LLM agents dependable in production.</h1>
+        <p class="lead">
+          At Oracle I proposed generating entire approval trees with large language models, took the idea to production
+          as a pipeline of <Ev id="prompts-19">19 specialised prompts</Ev>, then built the testing tool around it. I hold
+          an MSc in Artificial Intelligence and Machine Learning from the University of Birmingham.
+        </p>
+        <div class="btn-row hero-buttons">
+          <a class="btn btn-primary" href="#lab">Run the demos</a>
+          <a class="btn" href={site.cv} download data-track="cv">Download CV (PDF)</a>
+          <a href={`mailto:${site.email}`}>Email Harsh</a>
+        </div>
+      </div>
+      <div class="hero-figure">
+        <HeroTrace client:load />
+      </div>
+    </section>
+
+    <!-- Claims ledger -->
+    <section class="row" id="proof" aria-labelledby="proof-title">
+      <div class="margin margin-note">
+        <p>Each highlighted fact opens a note saying how it was measured, with a link to where you can check it.</p>
+      </div>
+      <div class="main">
+        <h2 id="proof-title">What I claim, and where to check it</h2>
+        <dl class="ledger">
+          <div class="ledger-row">
+            <dt>Took an LLM approval-rule generator to production at Oracle as a pipeline of <Ev id="prompts-19">19 specialised prompts</Ev>.</dt>
+            <dd><a href="/lab/pipeline">Pipeline explorer</a></dd>
+          </div>
+          <div class="ledger-row">
+            <dt>Cut its response time from about 5 seconds for every AI call to <Ev id="latency">a steady 20 seconds or so</Ev>, by running branches in parallel.</dt>
+            <dd><a href="/lab/pipeline#latency">Latency lab</a></dd>
+          </div>
+          <div class="ledger-row">
+            <dt>Built an agent that routes requests across <Ev id="tools-191">191 tools in 7 services</Ev>, with <Ev id="scenarios-11">11 of 11 live scenarios</Ev> passing.</dt>
+            <dd><a href="/lab/orchestrator">Routing explorer</a></dd>
+          </div>
+          <div class="ledger-row">
+            <dt>Forecast German power prices with an average miss of <Ev id="mae">13.60 EUR/MWh</Ev> over 11,999 hours the model had never seen.</dt>
+            <dd><a href="/lab/forecast">Forecast explorer</a></dd>
+          </div>
+          <div class="ledger-row">
+            <dt>Built an AI market briefing in which <Ev id="citations-21">21 of 21 cited numbers</Ev> check out against the data.</dt>
+            <dd><a href="/lab/forecast#briefing">Briefing audit</a></dd>
+          </div>
+          <div class="ledger-row">
+            <dt>Won <Ev id="ukfinnovator">first place at UKFinnovator 2026</Ev> as the key technical person in a team of five.</dt>
+            <dd><a href="#awards">Awards</a></dd>
+          </div>
+        </dl>
+        <div class="legend">
+          <h3 class="h4">How to read this site</h3>
+          <ul class="legend-list">
+            {
+              legendBadges.map((k) => (
+                <li>
+                  <Badge kind={k} />
+                  <span>{badges[k].explanation}.</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- The lab -->
+    <section class="row" id="lab" aria-labelledby="lab-title">
+      <div class="margin margin-note">
+        <p>Each demo runs in your browser. Nothing is sent anywhere.</p>
+      </div>
+      <div class="main">
+        <h2 id="lab-title">The lab</h2>
+        <p class="lead">Don't read my CV. Run it. Eight demos built from real projects. Each one says what is real and what is rebuilt.</p>
+        <div class="tour">
+          <h3 class="h4">A two-minute tour</h3>
+          <ol>
+            <li><a href="/lab/pipeline">Run a 19-prompt pipeline, then switch it from sequential to parallel.</a></li>
+            <li><a href="/lab/forecast#briefing">Change a number in an AI briefing and watch the audit catch it.</a></li>
+            <li><a href="/lab/orchestrator#routing">Pick a request and watch 191 tools narrow to a handful.</a></li>
+          </ol>
+        </div>
+        <div class="filters" data-filters>
+          <span class="visually-hidden" id="filter-label">Filter demos</span>
+          <div class="chips" role="group" aria-labelledby="filter-label">
+            {
+              filters.map((f) => (
+                <button class="chip" type="button" data-filter={f.id} aria-pressed={f.id === 'all' ? 'true' : 'false'}>
+                  {f.label}
+                </button>
+              ))
+            }
+          </div>
+          <p class="filter-count small" data-filter-count aria-live="polite" hidden></p>
+        </div>
+      </div>
+      <div class="wide lab-index">
+        {
+          labs.map((l, i) => (
+            <article class={`lab-row ${l.featured ? 'featured' : 'standard'}`} data-focus={l.focus} aria-labelledby={`lab-${l.slug}`}>
+              <div class="lab-row-text">
+                <p class="lab-row-meta">
+                  <span class="lab-num">{i + 1}</span>
+                  <span>{l.context}</span>
+                </p>
+                <h3 id={`lab-${l.slug}`}>
+                  <a href={`/lab/${l.slug}`}>{l.title}</a>
+                </h3>
+                <Badge kind={l.badge} />
+                <p class="lab-what">{l.what}</p>
+                <p class="lab-thirty">
+                  <strong>In 30 seconds:</strong> {l.thirty}
+                </p>
+                <a class="btn" href={`/lab/${l.slug}`} aria-label={`Open the demo: ${l.title}`}>
+                  Open the demo
+                </a>
+              </div>
+              {l.featured && (
+                <div class="lab-row-preview">
+                  {previews[l.slug] === 'pipeline' && <PipelinePreview client:visible />}
+                  {previews[l.slug] === 'bench' && <BenchPreview client:visible />}
+                  {previews[l.slug] === 'tools' && <ToolsPreview client:visible />}
+                  {previews[l.slug] === 'forecast' && (
+                    <div class="pv pv-forecast">
+                      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Actual and predicted German day-ahead prices, ${dfmt.format(tailStart)} to ${dfmt.format(tailEnd)} 2026. Average miss ${tailMae.toFixed(2)} EUR/MWh.`} preserveAspectRatio="none">
+                        <path d={path(t168.actual)} class="pv-line-actual" />
+                        <path d={path(t168.pred)} class="pv-line-pred" />
+                      </svg>
+                      <p class="pv-legend small">
+                        <span class="key key-actual">Actual</span>
+                        <span class="key key-pred">Forecast</span>
+                      </p>
+                      <p class="small soft">
+                        {dfmt.format(tailStart)} to {dfmt.format(tailEnd)} 2026, hourly. Average miss {tailMae.toFixed(2)} EUR/MWh.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- More work -->
+    <section class="row" id="more-work" aria-labelledby="more-work-title">
+      <div class="margin margin-note"><p>Hackathons, group projects and earlier work.</p></div>
+      <div class="main">
+        <h2 id="more-work-title">More work</h2>
+        <div class="acc-list">
+          {
+            moreWork.map((w) => (
+              <details class="acc" id={w.id}>
+                <summary>
+                  <span class="acc-title">{w.title}</span>
+                  <span class="acc-summary">{w.summary}</span>
+                </summary>
+                <div class="acc-body">
+                  {w.role && <p>{w.role}</p>}
+                  {w.bullets && (
+                    <ul>
+                      {w.bullets.map((b) => (
+                        <li>{b}</li>
+                      ))}
+                    </ul>
+                  )}
+                  {w.body && <p>{w.body}</p>}
+                  {w.tools && (
+                    <p class="small">
+                      <strong>Tools:</strong> {w.tools}
+                    </p>
+                  )}
+                  {w.links.length > 0 && (
+                    <p class="btn-row">
+                      {w.links.map((lk) => (
+                        <a href={lk.href} rel="noopener" data-track="repo">
+                          {lk.label}
+                        </a>
+                      ))}
+                    </p>
+                  )}
+                </div>
+              </details>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Experience -->
+    <section class="row" id="experience" aria-labelledby="experience-title">
+      <div class="margin margin-note">
+        <dl>
+          <dt>When</dt>
+          <dd>{experience.dates}</dd>
+          <dt>Team</dt>
+          <dd>{experience.team}</dd>
+          <dt>Tools</dt>
+          <dd>{experience.tools}</dd>
+        </dl>
+      </div>
+      <div class="main">
+        <h2 id="experience-title">Experience</h2>
+        <h3>{experience.role}</h3>
+        <p class="soft exp-meta">
+          {experience.dates}<br />
+          {experience.team}
+        </p>
+        <ol class="progress-strip" aria-label="How the role progressed">
+          {experience.progress.map((p) => <li>{p}</li>)}
+        </ol>
+        <p class="small"><strong>Tools:</strong> {experience.tools}</p>
+        <ol class="exp-entries">
+          {
+            experience.entries.map((e, i) => (
+              <li>
+                <h4>{e.title}</h4>
+                <p>{e.text}</p>
+                {e.href && <p><a href={e.href}>{e.linkText}</a></p>}
+                {i === 3 && (
+                  <div class="table-wrap">
+                    <table class="conclusions">
+                      <caption>What I concluded</caption>
+                      <thead>
+                        <tr>
+                          <th scope="col">Approach</th>
+                          <th scope="col">Conclusion</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {conclusions.map((c) => (
+                          <tr>
+                            <th scope="row">{c.approach}</th>
+                            <td>{c.conclusion}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <!-- Education and awards -->
+    <section class="row" id="education" aria-labelledby="education-title">
+      <div class="margin margin-note"><p>Module marks are out of 100.</p></div>
+      <div class="main">
+        <h2 id="education-title">Education</h2>
+        <div class="edu">
+          <div class="edu-row">
+            <h3 class="h4">{education.msc.line1}</h3>
+            <p class="edu-grade">
+              {education.msc.grade}<br /><strong>{education.msc.top}</strong>
+            </p>
+            <p>
+              {education.msc.scholarship} Marks: {education.msc.marks.map((m) => `${m.module} ${m.mark}`).join(', ')}.
+              Dissertation: <a href="/lab/dissertation">{education.msc.dissertation}</a>, supervised by {education.msc.supervisor}.
+            </p>
+            <p class="small soft">Modules: {education.msc.modules.join(', ')}.</p>
+          </div>
+          <div class="edu-row">
+            <h3 class="h4">{education.btech.line1}</h3>
+            <p class="edu-grade">{education.btech.grade}</p>
+            <p class="small">Coursework: {education.btech.coursework.join(', ')}.</p>
+          </div>
+          <p class="small soft">Other courses: {education.other.join('. ')}.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="row" id="awards" aria-labelledby="awards-title">
+      <div class="margin" aria-hidden="true"></div>
+      <div class="main">
+        <h2 id="awards-title">Awards</h2>
+        <ul class="awards">
+          {
+            awards.map((a) => (
+              <li>
+                <span class="award-name">{a.name}</span>
+                <span>{a.evidence ? <Ev id={a.evidence}>{a.wording}</Ev> : a.wording}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <!-- Skills -->
+    <section class="row" id="skills" aria-labelledby="skills-title">
+      <div class="margin margin-note"><p>Choose a skill to see where it was used.</p></div>
+      <div class="main">
+        <h2 id="skills-title">Skills, with evidence</h2>
+        {
+          skillGroups.map((g, gi) => (
+            <div class="skill-group" data-skill-group>
+              <h3 class="h4" id={`skill-group-${gi}`}>{g.group}</h3>
+              <div class="chips" role="group" aria-labelledby={`skill-group-${gi}`}>
+                {g.skills.map((s, si) => (
+                  <button class="chip" type="button" aria-pressed="false" data-skill={`${gi}-${si}`} aria-controls={`skill-used-${gi}`}>
+                    {s.name}
+                  </button>
+                ))}
+              </div>
+              <p class="skill-used" id={`skill-used-${gi}`} aria-live="polite" hidden />
+              {g.skills.map((s, si) => (
+                <template data-skill-used={`${gi}-${si}`}>
+                  <strong>Used in:</strong>{' '}
+                  {s.usedIn.map((u, ui) => (
+                    <>
+                      {ui > 0 && ', '}
+                      {u.href ? <a href={u.href}>{u.label}</a> : u.label}
+                    </>
+                  ))}
+                </template>
+              ))}
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- About -->
+    <section class="row" id="about" aria-labelledby="about-title">
+      <div class="margin" aria-hidden="true"></div>
+      <div class="main">
+        <h2 id="about-title">About</h2>
+        <div class="about">
+          <img src={site.photo} alt="Harsh Yadav" width="400" height="500" loading="lazy" decoding="async" class="about-photo" />
+          <div class="about-text">
+            <p class="lead">In seminars I'm easy to find: the bald guy asking too many questions.</p>
+            <p>
+              I'm an AI engineer focused on LLM systems and evaluation. I studied Electronics and Electrical Engineering at
+              IIT Guwahati and moved into software because solving problems in code was the part I enjoyed most.
+            </p>
+            <p>
+              At Oracle I saw how much AI could speed up building software and wanted to understand it properly. That took
+              me to an MSc in AI and Machine Learning at the University of Birmingham, as a Chancellor's Scholar.
+            </p>
+            <p>
+              Away from the screen I have won medals in swimming and taekwondo, which is mostly how I learned that progress
+              comes from showing up to the boring repetitions.
+            </p>
+            <p>I'm based in the UK and available immediately.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="row" id="contact" aria-labelledby="contact-title">
+      <div class="margin" aria-hidden="true"></div>
+      <div class="main">
+        <h2 id="contact-title">Get in touch</h2>
+        <p class="contact-email"><a href={`mailto:${site.email}`}>{site.email}</a></p>
+        <div class="btn-row">
+          <button class="btn btn-primary" type="button" data-copy={site.email} data-track="email-copy">Copy email address</button>
+          <a class="btn" href={`mailto:${site.email}`}>Email Harsh</a>
+          <a class="btn" href={site.linkedin} rel="noopener">LinkedIn</a>
+          <a class="btn" href={site.github} rel="noopener">GitHub</a>
+          <a class="btn" href={site.cv} download data-track="cv">Download CV (PDF)</a>
+        </div>
+        <p class="contact-line">Based in the UK. Available immediately.</p>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<script>
+  // Lab filters (section 7.4), mirrored to ?focus=, and skill chips (section 7.8).
+  const chips = [...document.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+  const rows = [...document.querySelectorAll<HTMLElement>('.lab-row')];
+  const count = document.querySelector<HTMLElement>('[data-filter-count]')!;
+  const valid = ['agents', 'quant', 'algorithms', 'fullstack'];
+
+  function apply(f: string, push: boolean) {
+    chips.forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.filter === f)));
+    let shown = 0;
+    rows.forEach((r) => {
+      const on = f === 'all' || r.dataset.focus === f;
+      r.hidden = !on;
+      if (on) shown++;
+    });
+    if (f === 'all') {
+      count.hidden = true;
+    } else {
+      count.hidden = false;
+      count.innerHTML = '';
+      count.append(`Showing ${shown} of ${rows.length}. `);
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'linklike';
+      b.textContent = 'Show all.';
+      b.addEventListener('click', () => apply('all', true));
+      count.append(b);
+    }
+    if (push) {
+      const url = new URL(location.href);
+      if (f === 'all') url.searchParams.delete('focus');
+      else url.searchParams.set('focus', f);
+      history.replaceState(history.state, '', url.toString());
+    }
+  }
+  chips.forEach((c) => c.addEventListener('click', () => apply(c.dataset.filter!, true)));
+  const initial = new URLSearchParams(location.search).get('focus');
+  if (initial && valid.includes(initial)) apply(initial, false);
+
+  document.querySelectorAll<HTMLElement>('[data-skill-group]').forEach((g) => {
+    const out = g.querySelector<HTMLElement>('.skill-used')!;
+    g.querySelectorAll<HTMLButtonElement>('[data-skill]').forEach((b) =>
+      b.addEventListener('click', () => {
+        const was = b.getAttribute('aria-pressed') === 'true';
+        document.querySelectorAll('[data-skill]').forEach((x) => x.setAttribute('aria-pressed', 'false'));
+        document.querySelectorAll<HTMLElement>('.skill-used').forEach((x) => (x.hidden = true));
+        if (was) return;
+        b.setAttribute('aria-pressed', 'true');
+        const tpl = g.querySelector<HTMLTemplateElement>(`template[data-skill-used="${b.dataset.skill}"]`)!;
+        out.replaceChildren(tpl.content.cloneNode(true));
+        out.hidden = false;
+      }),
+    );
+  });
+</script>
